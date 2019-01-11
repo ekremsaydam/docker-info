@@ -1,0 +1,16 @@
+version: "3" # min 2.0
+services: # container ismi
+  servicename: # --name
+    image: # username/repo:tag --> image
+    command: # Opt
+    environment: # Opt, -e
+    volumes: # Opt -v
+    ports: 
+      - "4000:80"
+    networks:
+      - webnet
+
+volumes: # Optional, docker volume create
+
+networks: # Optional, docker network create
+  webnet:
