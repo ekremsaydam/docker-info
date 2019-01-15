@@ -6,14 +6,14 @@ services:
     ports:
       - 27017:27017
     secrets:
-      - mongo-user
+      # - mongo-user
       - mongo-pass
     environment:
+      MONGO_INITDB_ROOT_USERNAME: username
       MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo-pass
-      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo-user
-
 secrets:
-  mongo-user:
-    file: ./mongo-user.txt
+  # mongo-user:
+  #   file: ./mongo-user.txt
   mongo-pass:
     file: ./mongo-pass.txt
+
