@@ -104,12 +104,12 @@ Docker linux yerel imaj deposu:
 | -------------- | ----------- |
 | `docker info`  | Docker kurulumu ile ilgili sistem genelindeki bilgileri gösterir. [docker info](https://docs.docker.com/engine/reference/commandline/info/)|
 | `docker images`  | Yüklü imajları listelemek için kullanılır [docker images](https://docs.docker.com/engine/reference/commandline/images/) |
-| `docker image ls`   | Yüklü imajları listelemek için kullanılır. REPOSITORY: hangi repodan çekildiği bilgisini gösterir. TAG: imajın versiyonunun gösterir. IMAGE ID: her docker için farklı bir kimlik olup 64 karakterden oluşur. İlk 12 karakteri gösterilir. İmajın 12 karakterlik kısmı kullanılarakda işlem yapılabilir. CREATED: imajın oluşturulduğu tarihi gösterir. SIZE: imajın bıyutunu gösterir. NOT: ID numaraları ile işlem yaparken hızdan tasarruf etmek adına kimlik numarasının benzersiz olan ilk karakterleri kullanılarak da imaj üzerinde işlemyapılabilir. [docker image](https://docs.docker.com/engine/reference/commandline/image/) \|[docker image ls](https://docs.docker.com/engine/reference/commandline/image_ls/)|
+| `docker image ls`   | Yüklü imajları listelemek için kullanılır.<br> **REPOSITORY:** hangi repodan çekildiği bilgisini gösterir. TAG: imajın versiyonunun gösterir. <br>**IMAGE ID:** her docker için farklı bir kimlik olup 64 karakterden oluşur. İlk 12 karakteri gösterilir. İmajın 12 karakterlik kısmı kullanılarakda işlem yapılabilir. <br>**CREATED:** imajın oluşturulduğu tarihi gösterir.<br>**SIZE:**imajın bıyutunu gösterir. NOT: ID numaraları ile işlem yaparken hızdan tasarruf etmek adına kimlik numarasının benzersiz olan ilk karakterleri kullanılarak da imaj üzerinde işlemyapılabilir. [docker image](https://docs.docker.com/engine/reference/commandline/image/) \|[docker image ls](https://docs.docker.com/engine/reference/commandline/image_ls/)|
 | `docker image ls -q` | Yüklü imajların ID numaralarını listelemek için kullanılır. |
 | `docker image pull <<image_name>>`  | Docker Hub üzerinde yer alan imajı yerel sisteme çekmek için kullanılır. [docker image pull](https://docs.docker.com/engine/reference/commandline/image_pull/)|
 | `docker images \| grep -A2 postgres`  | postgress imajından önce yüklenmiş son 2 image yi gösterir. Toplamda 3 image gösterecektir. |
 | `docker images \| grep -B2 postgres`  | postgress imajından sonra yüklenmiş 2 image yi gösterir. Toplamda 3 image gösterecektir. |
-| `docker image pull alpine:latest`  | : öncesi repository adını sonra gelen tag bölümü de imaja ait versiyonu göstermektedir. TAG bölümü belirtilmez ise latest kabul edilir. NOT: latest ifadesi güncel imajı işaret ettiğini garanti etmez. |
+| `docker image pull alpine:latest`  | : öncesi repository adını sonra gelen tag bölümü de imaja ait versiyonu göstermektedir. TAG bölümü belirtilmez ise latest kabul edilir. <br> **NOT:** latest ifadesi güncel imajı işaret ettiğini garanti etmez. |
 | `docker image pull alpine`  | : öncesi repository adını sonra gelen tag bölümü de imaja ait versiyonu göstermektedir. TAG bölümü belirtilmez ise latest kabul edilir. NOT: latest ifadesi güncel imajı işaret ettiğini garanti etmez. |
 | `docker image pull alpine:3`  | : öncesi repository adını sonra gelen tag bölümü de imaja ait versiyonu göstermektedir. |
 | `docker image pull alpine -a`  | -a parametresi ile bir imajın bütün versiyonları indirilebilir. |
@@ -117,3 +117,38 @@ Docker linux yerel imaj deposu:
 | `docker image rm nginx:latest`  | imaj_name olarak belirtilen imajı siler. NOT: Bir container a ait imaj silinemez. Öncesinde imajın bağlı bulunan container ın durdurulması gereklidir. [docker image rm](https://docs.docker.com/engine/reference/commandline/image_rm/) |
 | `docker rmi alpine:3`  | Belirtilen imajı siler. [docker rmi](https://docs.docker.com/engine/reference/commandline/rmi/) |
 | `docker rmi $(docker image ls -q) --force`  | Bütün imajları silmek için kullanılır. [docker rmi](https://docs.docker.com/engine/reference/commandline/rmi/) |
+| `docker images --filter "dangling=true"`  | TAG verisi olmayan imajları listelemek için kullanılır. [docker images Filtering](https://docs.docker.com/engine/reference/commandline/images/#filtering) |
+| `docker rmi $(docker images -f "dangling=true" -q)`  | TAG verisi olmayan imajları silmek için kullanılır. [docker images Filtering](https://docs.docker.com/engine/reference/commandline/images/#filtering) |
+| `docker images --filter label="maintainer"`  | Label olarak verilen key value şeklindeki veriye göre filtreleme yapar. `docker image inspect nginx:latest` ile label isimleri görüntülenebilir. [docker images Filtering](https://docs.docker.com/engine/reference/commandline/images/#filtering) |
+| `docker image history nginx:latest`  | Belitilen imaj üzerindeki değişiklikleri boyut bilgisi ile gösterir. [docker image history](https://docs.docker.com/engine/reference/commandline/image_history/) |
+| `docker image tag node:latest node-world:v3` | nginx:latest imajından nginx:v1 etiketi ile yeni bir tane oluşturur. [docker image tag](https://docs.docker.com/engine/reference/commandline/image_tag/) |
+| `docker images \| grep node-world` | docker imajlarında node+world olarak isimlendirilmiş imajlar gösterilir. [docker image tag](https://docs.docker.com/engine/reference/commandline/image_tag/) |
+| `docker image save nginx:latest > nginx_later.tar` | nginx:v2 imajının tar arşivi olarak kaydedilmesini sağlar. [docker image save](https://docs.docker.com/engine/reference/commandline/image_save/) |
+| `docker image load --input nginx_later.tar` | Arşiv olarak kaydedilen imajların geri yüklenmesini sağlar. [docker image load](https://docs.docker.com/engine/reference/commandline/image_load/) |
+| `docker image prune` | Geçmişe yönelik kullanılmayan imajları silmek için kullanılır. [docker image load](https://docs.docker.com/engine/reference/commandline/image_load/) |
+| `docker image prune -a` | Geçmişe yönelik kullanılmayan ve referans verileyen imajları silmek için kullanılır.(-a  --all) [docker image prune](https://docs.docker.com/engine/reference/commandline/image_prune/) |
+| `docker image prune -a --force --filter "until=24h"` | Son 24 saate oluşturulmuş imajları siler. [docker image prune](https://docs.docker.com/engine/reference/commandline/image_prune/) |
+| `docker login` | Hub.docker.com üzerinde sistemimizin login olması için kullanılır. [docker login](https://docs.docker.com/engine/reference/commandline/login/) |
+| `docker image tag alpine:latest esaydam/alpine5:v1`<br><br>`docker tag alpine:latest esaydam/alpine5:v1` | alpine:latest imajını esaydam/alpine5:v1 olarak işaretler. [docker image tag](https://docs.docker.com/engine/reference/commandline/image_tag/) |
+| `docker image push esaydam/alpine5:v1`<br><br> `docker push esaydam/alpine5:v1`| Hub.docker.com üzerinde bulunan repository'ye imajı göndermek için kullanılır. [docker image push](https://docs.docker.com/engine/reference/commandline/image_push/) |
+
+# DOCKER CONTAINER
+Bir container bir imajın çalışır durumdaki halidir. Bir imajdan birden çok container çalıştırılabilir. 
+
+Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sisteminin bütününü çalıştırırken, container konumlandığı işletim sisteminin çekirdeğini paylaşarak sanal makineye göre daha hızlı çalışacaktır.
+
+| Command        | Description |
+| -------------- | ----------- |
+| `docker container ls`<br><br>`docker ps`<br><br>`docker container ls -a`<br><br>`docker ps -a`  | Çalışan containerları göstermek için kullanılır. [docker container ls](https://docs.docker.com/engine/reference/commandline/container_ls/)|
+| `docker container run alpine:latest ls -a`  | Belirtilen imaj içerisinde ls -a komutunu çalıştırır ve container çalışmasını durdurur. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker container run --interactive --tty  centos /bin/bash`<br><br>`docker container run -it centos /bin/bash` <br><br>**`docker run -itd centos /bin/bash`** | **-i**=> interactive ve **-t** => TTY. Belirtilen imaj başlatılır ve bash kabuğu üzerinden sanal bir terminal üzerinden etkileşimli bağlantı oluşturulurur. <br> Centos imajı üzerinden bir container ayağa kaldırır ve interaktif bash ile ona bağlanır. <br> **NOT:** <br> - **CTRL+Q+P** tuş kombinasyonu ile çıkış yapılabilir. Bu kombinasyonla çıkış yapılması **containerin çalışmasını durdurmaz.** <br> - Bash kabuğunda çalışırken **exit** komutu ile çıkılabilir. Bu **bash kabuğunun sonlanmasına neden olur**. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) |
+| `docker container attach 78b324e4e06c`<br><br>`docker attach 78b324e4e06c` | Çalışan container a bağlanılmasını sağlar. [docker container attach](https://docs.docker.com/engine/reference/commandline/container_attach/) ![docker container rm](/img/docker_container_p1.png)|
+| `docker container rm ebbfd968b330` <br><br>`docker container rm ebbfd968b330 -f`| container i siler. container silinmesi için durmuş olması gerekir. **-f --force** parametresi ile çalışan kontainer da silinir. [docker container rm](https://docs.docker.com/engine/reference/commandline/container_rm/)|
+| `docker container run --interactive --tty --detach centos /bin/bash`<br><br> `docker container run -itd centos /bin/bash`| Konteynerin arka planda çalıştırılmasını sağlar. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker container commit 092 new_centos`| Varolan bir container üzerinden yeni bir imaj oluşturur ve yerel olarak images arasına kaydeder.  [docker container commit](https://docs.docker.com/engine/reference/commandline/container_commit/) ![docker container commit](/img/docker_container_p2.png)|
+| `docker container cp 092:/liste.txt .` | Belirtilen container içindeki dosyaları bulunulan dizine kopyalar [docker container cp](https://docs.docker.com/engine/reference/commandline/container_cp/) ![docker container cp](/img/docker_container_p3.png)|
+
+
+
+
+
