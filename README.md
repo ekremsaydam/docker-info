@@ -179,7 +179,7 @@ https://docs.docker.com/config/containers/resource_constraints/
 
 | Command        | Description |
 | -------------- | ----------- |
-| `--cpu-shares <int>`  | CPU kullanımının bağıl değerini gösterir. Varsayılan değeri 1024tür. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
+| `--cpu-shares <int>`  | CPU kullanımının **bağıl değerini** gösterir. Varsayılan değeri 1024tür. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
 | `--cpus=<value>`  | Bir container kullanabileceği mevcut CPU kaynaklarının ne kadarını kullanılacağını belirtir. Örneğin, ana makinenin iki CPU'su varsa ve --cpus="1.5" olarak ayarlarsanız, container ın CPU'ların en fazla bir buçuk tanesi garanti edilir. Bu, --cpu-period="100000" ve --cpu-quota="150000" ayarının eşdeğeridir. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
 | `--memory <bytes>`  | RAM in sınırlandırılması için kullanılır<br>NOT:<br> - bytes, kilobytes, megabytes, gigabytes olarak 4 farklı değer alır. Bunların kısaltmaları kullanılır. b, k, m, g<br>- izin verilen minimum değer 6m(6 megabayt) olur. [Limit a container’s access to memory](https://docs.docker.com/config/containers/resource_constraints/#limit-a-containers-access-to-memory)|
 
@@ -193,6 +193,7 @@ https://docs.docker.com/config/containers/resource_constraints/
 | `docker run --name c_ninx --cpus 0.5 -d nginx` | Bir çekirdeğin yarısı konteynere atanır.<br>**NOT:**<br>	- cpus defauit değeri 0 dır. Bu kullanım oranında limit olmadığını gösteriri. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker run --name c_redis --cpus 0.5 -d redis` | Bir çekirdeğin yarısı konteynere atanır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker run --name c_apline --memory 500m -ti -d alpine` | 500megabyte memory atanması (500MB = 500 x 1024 x 1024 = 524288000 bytes) [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| **`docker container update --cpu-shares 500 c_busybox`** | varolan ve çalışan bir container kaynağının güncelleştirilmesi. [docker container update](https://docs.docker.com/engine/reference/commandline/container_update/)  ![docker container rm](/img/docker_container_p13.png)|
 
 
 # ORNEKLER
@@ -233,3 +234,21 @@ https://docs.docker.com/config/containers/resource_constraints/
 **`docker ps`**
 
 
+# VOLUME ILE CALISMAK
+
+| Command        | Description |
+| -------------- | ----------- |
+| `docker volume create`  | Docker volume bağlantı noktası oluşturur. Bu bağlantı ismi 64 karakterden oluşan bir hex bilgisi volume ismini oluşturur. [docker volume create](https://docs.docker.com/engine/reference/commandline/volume_create/)|
+| `docker volume create --name volumeTest`  | Yeni bir volume yaratırken isim verilerek bir volume yaratılır.  [docker volume create](https://docs.docker.com/engine/reference/commandline/volume_create/)|
+| `docker volume inspect volumeTest` <br><br> `docker inspect volumeTest` | Belirtilen volume ile ilgili detay bilgi gösterir. [docker volume inspect](https://docs.docker.com/engine/reference/commandline/volume_inspect/) ![docker container rm](/img/docker_volume_p1.png)|
+| `docker volume ls` | Belirtilen volume ile ilgili detay bilgi gösterir. [docker volume ls](https://docs.docker.com/engine/reference/commandline/volume_ls/)|
+| `docker volume rm 649518d850bcc5c3905a6cd989f977651b4f909d3ce18618d1d3f73fed93da99` <br><br> `docker volume rm volumeTest` | Belirtilen volume ile silinir. Dikkat edilmesi gereken nokta çalışan container a bağlı bir volume silinemez. [docker volume rm](https://docs.docker.com/engine/reference/commandline/volume_rm/)|
+| `docker volume prune` | Herhangi bir container a bağlı olmayan volume ler siliniz. [docker volume prune](https://docs.docker.com/engine/reference/commandline/volume_prune/)|
+
+
+# CONTAINER KAYNAKLARININ GUNCELLENMESI
+
+`docker container run --name c_busybox -it --cpu-shares 700 busybox`\
+`docker ps`\
+`docker container inspect c_busybox | grep CpuSha`\
+**`docker container update --cpu-shares 500 c_busybox`**
