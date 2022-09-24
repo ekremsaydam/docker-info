@@ -114,20 +114,20 @@ Docker linux yerel imaj deposu:
 | `docker image pull alpine:3`  | : öncesi repository adını sonra gelen tag bölümü de imaja ait versiyonu göstermektedir. |
 | `docker image pull alpine -a`  | -a parametresi ile bir imajın bütün versiyonları indirilebilir. |
 | `docker image inspect nginx:latest`  | belirtilen imaj ile ilgili ayrıntılı bilgi gösterir. [docker image inspect](https://docs.docker.com/engine/reference/commandline/image_inspect/) |
-| `docker image rm nginx:latest`  | imaj_name olarak belirtilen imajı siler. NOT: Bir container a ait imaj silinemez. Öncesinde imajın bağlı bulunan container ın durdurulması gereklidir. [docker image rm](https://docs.docker.com/engine/reference/commandline/image_rm/) |
+| `docker image rm nginx:latest`  | imaj_name olarak belirtilen imajı siler. <br>**NOT**: Bir container a ait imaj silinemez. Öncesinde imajın bağlı bulunan container ın durdurulması gereklidir. [docker image rm](https://docs.docker.com/engine/reference/commandline/image_rm/) |
 | `docker rmi alpine:3`  | Belirtilen imajı siler. [docker rmi](https://docs.docker.com/engine/reference/commandline/rmi/) |
 | `docker rmi $(docker image ls -q) --force`  | Bütün imajları silmek için kullanılır. [docker rmi](https://docs.docker.com/engine/reference/commandline/rmi/) |
 | `docker images --filter "dangling=true"`  | TAG verisi olmayan imajları listelemek için kullanılır. [docker images Filtering](https://docs.docker.com/engine/reference/commandline/images/#filtering) |
 | `docker rmi $(docker images -f "dangling=true" -q)`  | TAG verisi olmayan imajları silmek için kullanılır. [docker images Filtering](https://docs.docker.com/engine/reference/commandline/images/#filtering) |
+| `docker image prune` | Geçmişe yönelik kullanılmayan imajları silmek için kullanılır. Prune paremetresinin rm den farkı *dangling* modunda olan yani bir etikete (tag) sahip olmayan imajların tamamını siler. [docker image load](https://docs.docker.com/engine/reference/commandline/image_load/) |
+| `docker image prune -a` | Geçmişe yönelik kullanılmayan ve referans verileyen imajları silmek için kullanılır.(-a  --all) [docker image prune](https://docs.docker.com/engine/reference/commandline/image_prune/) |
+| `docker image prune -a --force --filter "until=24h"` | Son 24 saate oluşturulmuş imajları siler. [docker image prune](https://docs.docker.com/engine/reference/commandline/image_prune/) |
 | `docker images --filter label="maintainer"`  | Label olarak verilen key value şeklindeki veriye göre filtreleme yapar. `docker image inspect nginx:latest` ile label isimleri görüntülenebilir. [docker images Filtering](https://docs.docker.com/engine/reference/commandline/images/#filtering) |
 | `docker image history nginx:latest`  | Belitilen imaj üzerindeki değişiklikleri boyut bilgisi ile gösterir. [docker image history](https://docs.docker.com/engine/reference/commandline/image_history/) |
 | `docker image tag node:latest node-world:v3` | nginx:latest imajından nginx:v1 etiketi ile yeni bir tane oluşturur. [docker image tag](https://docs.docker.com/engine/reference/commandline/image_tag/) |
 | `docker images \| grep node-world` | docker imajlarında node+world olarak isimlendirilmiş imajlar gösterilir. [docker image tag](https://docs.docker.com/engine/reference/commandline/image_tag/) |
 | `docker image save nginx:latest > nginx_later.tar` | nginx:v2 imajının tar arşivi olarak kaydedilmesini sağlar. [docker image save](https://docs.docker.com/engine/reference/commandline/image_save/) |
 | `docker image load --input nginx_later.tar` | Arşiv olarak kaydedilen imajların geri yüklenmesini sağlar. [docker image load](https://docs.docker.com/engine/reference/commandline/image_load/) |
-| `docker image prune` | Geçmişe yönelik kullanılmayan imajları silmek için kullanılır. [docker image load](https://docs.docker.com/engine/reference/commandline/image_load/) |
-| `docker image prune -a` | Geçmişe yönelik kullanılmayan ve referans verileyen imajları silmek için kullanılır.(-a  --all) [docker image prune](https://docs.docker.com/engine/reference/commandline/image_prune/) |
-| `docker image prune -a --force --filter "until=24h"` | Son 24 saate oluşturulmuş imajları siler. [docker image prune](https://docs.docker.com/engine/reference/commandline/image_prune/) |
 | `docker login` | Hub.docker.com üzerinde sistemimizin login olması için kullanılır. [docker login](https://docs.docker.com/engine/reference/commandline/login/) |
 | `docker image tag alpine:latest esaydam/alpine5:v1`<br><br>`docker tag alpine:latest esaydam/alpine5:v1` | alpine:latest imajını esaydam/alpine5:v1 olarak işaretler. [docker image tag](https://docs.docker.com/engine/reference/commandline/image_tag/) |
 | `docker image push esaydam/alpine5:v1`<br><br> `docker push esaydam/alpine5:v1`| Hub.docker.com üzerinde bulunan repository'ye imajı göndermek için kullanılır. [docker image push](https://docs.docker.com/engine/reference/commandline/image_push/) |
@@ -164,6 +164,7 @@ Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sistem
 | `docker container stop fa`| Belirtilen containerın çalışmasını durdurur. [docker container stop](https://docs.docker.com/engine/reference/commandline/container_stop/) |
 | `docker container stop fa`| Belirtilen containerın çalışmasını durdurur. [docker container stop](https://docs.docker.com/engine/reference/commandline/container_stop/) |
 | `docker container ls -a --filter status=exited`| Durdurulmuş konteynerlerin listelenmesini sağlar. [docker container ls](https://docs.docker.com/engine/reference/commandline/container_ls/) |
+| `docker container rm $(docker container ls -a --filter status=exited --quiet)`| Durdurulmuş konteynerlerin tamamının silinmesini sağlar. [docker container ls](https://docs.docker.com/engine/reference/commandline/container_ls/) |
 | `docker container start fa`| Belirtilen durmuş (stop) containerı çalıştırır. [docker container start](https://docs.docker.com/engine/reference/commandline/container_start/) ![docker container start](/img/docker_container_p8.png)|
 | `docker container port 660c0b8819d0`| Belirtilen containerın port maping bilgilerini gösterir. [docker container port](https://docs.docker.com/engine/reference/commandline/container_port/) ![docker container port](/img/docker_container_p9.png)|
 | `docker container rm 660c0b8819d0 -f`| Belirtilen container veya containerları force (-f) silmeye zorlar. [docker container rm](https://docs.docker.com/engine/reference/commandline/container_rm/) ![docker container rm](/img/docker_container_p10.png)|
@@ -196,22 +197,34 @@ https://docs.docker.com/config/containers/resource_constraints/
 
 # ORNEKLER
 ## CONTAINER YAŞAM DÖNGÜSÜ
-`docker create ubuntu` \
+`docker container run -it -d ubuntu /bin/bash` * **NOT**: -d --detach Containerarka planda çalıştırır.* <br> 
+`docker ps` \
+`docker rename 0161efd6c7e9 c_ubuntu` \
+`docker ps` \
+`docker stop c_ubuntu` \
+`docker ps` \
+`docker ps -a` \
+`docker start c_ubuntu` \
+`docker exec c_ubuntu ls -al` \
+`docker rm c_ubuntu` \
+`docker rm c_ubuntu` \
+`docker rm c_ubuntu -f` 
 
 
 ## ÇALIŞAN CONTAINER den IMAJ oluşturmak
 **`docker container run -it -d centos /bin/bash`**\
 **`docker ps`**\
-**`docker attach 7a`**
+**`docker rename dff867e25020 c_centos`**\
+**`docker attach c_centos`**
 
 >*`cd /etc/yum.repos.d/`\
 >`sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*`\
->`sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/>yum.repos.d/CentOS-*`\
+>`sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*`\
 >`yum update -y`\
 >`yum install wget`*\
 [centos yum update](https://techglimpse.com/failed-metadata-repo-appstream-centos-8/)
 
-**`docker rename sharp_heyrovsky c_centos`**\
+**`docker diff c_centos`** * **NOT**:Containerdaki değişikliklerin takip edilmesi* <br> 
 **`docker commit c_centos mynewcentos`**\
 **`docker image ls`**\
 **`docker ps`**\
