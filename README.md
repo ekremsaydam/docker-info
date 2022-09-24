@@ -171,5 +171,52 @@ Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sistem
 
 # DOCKER CONTAINER KAYNAK KULLANIMI
 
+Sistem üzerinde başlatılan container ihtiyaç duyduğu kaynakları host makinesi üzerinden kullanır. Performans anlamında bu iyi bir durum değildir. Kaynak kullanımının sınırlandırılması gerekmektedir. Container başlatılırken kaynaklar sınırlandırılabilir. 
+
+https://docs.docker.com/config/containers/resource_constraints/
+
+
+| Command        | Description |
+| -------------- | ----------- |
+| `--cpu-shares <int>`  | CPU kullanımının bağıl değerini gösterir. Varsayılan değeri 1024tür. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
+| `--cpus=<value>`  | Bir container kullanabileceği mevcut CPU kaynaklarının ne kadarını kullanılacağını belirtir. Örneğin, ana makinenin iki CPU'su varsa ve --cpus="1.5" olarak ayarlarsanız, container ın CPU'ların en fazla bir buçuk tanesi garanti edilir. Bu, --cpu-period="100000" ve --cpu-quota="150000" ayarının eşdeğeridir. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
+| `--memory <bytes>`  | RAM in sınırlandırılması için kullanılır<br>NOT:<br> - bytes, kilobytes, megabytes, gigabytes olarak 4 farklı değer alır. Bunların kısaltmaları kullanılır. b, k, m, g<br>- izin verilen minimum değer 6m(6 megabayt) olur. [Limit a container’s access to memory](https://docs.docker.com/config/containers/resource_constraints/#limit-a-containers-access-to-memory)|
+
+
+| Command        | Description |
+| -------------- | ----------- |
+| `docker run --detach --interactive --tty --name kaynakGozlem --cpu-shares 256 --memory 1024M centos /bin/bash`  | Container için Cpu ve rem sınırlandırması sağlar. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker container inspect d61967ef9e53` <br><br>`docker container inspect kaynakGozlem` | Belirtilen container ın detaylı configurasyon ayarları görüntüler. [docker container inspect](https://docs.docker.com/engine/reference/commandline/container_inspect/) ![docker container rm](/img/docker_container_p12.png)|
+| `docker run --name c_ninx --cpu-shares 512 -d nginx` | Nginx için kaynakların yarısı ayrılmıştır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker run --name c_redis --cpu-shares 512 -d redis` | Redist için kalan yarısı ayrılmıştır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker run --name c_ninx --cpus 0.5 -d nginx` | Bir çekirdeğin yarısı konteynere atanır.<br>**NOT:**<br>	- cpus defauit değeri 0 dır. Bu kullanım oranında limit olmadığını gösteriri. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker run --name c_redis --cpus 0.5 -d redis` | Bir çekirdeğin yarısı konteynere atanır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker run --name c_apline --memory 500m -ti -d alpine` | 500megabyte memory atanması (500MB = 500 x 1024 x 1024 = 524288000 bytes) [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+
+
+# ORNEKLER
+## CONTAINER YAŞAM DÖNGÜSÜ
+`docker create ubuntu` \
+
+
+## ÇALIŞAN CONTAINER den IMAJ oluşturmak
+**`docker container run -it -d centos /bin/bash`**\
+**`docker ps`**\
+**`docker attach 7a`**
+
+>*`cd /etc/yum.repos.d/`\
+>`sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*`\
+>`sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/>yum.repos.d/CentOS-*`\
+>`yum update -y`\
+>`yum install wget`*\
+[centos yum update](https://techglimpse.com/failed-metadata-repo-appstream-centos-8/)
+
+**`docker rename sharp_heyrovsky c_centos`**\
+**`docker commit c_centos mynewcentos`**\
+**`docker image ls`**\
+**`docker ps`**\
+**`docker rm c_centos -f`**\
+**`docker run -it -d mynewcentos /bin/bash`**\
+**`docker ps`**
 
 
