@@ -1,0 +1,2 @@
+FROM centos
+ENV user=dockerfileuser password=dockerfilepassword
