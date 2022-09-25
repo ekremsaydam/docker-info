@@ -47,7 +47,29 @@ IPAddress shell üzerinden öğrenme iki farklı yol.
 >`docker inspect --format='{{range.NetworkSettings.Networks}}{{.MacAddress}}{{end}}' c_ubuntu`\
 `docker inspect --format='{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' c_ubuntu`
 
+>>alias oluşturmak için\
+`alias dockerip="docker inspect --format='{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"`\
+`dockerip phpmyadmin`
+
 >`docker container inspect c_ubuntu`
 
+# PORT YÖNLENDİRME
+Dört farklı kullanım formatı bulunmaktadır.\
+1. `--port host_port:container_port`\
+2. `--port container_port`\
+3. `--port host_ip:host_port:container_port`\
+4. `--port host_ip::container_port`
 
+En sık kullanılan format 1. formattır. Örnek olara\
+`docker run --name c_nginx -d -p 55:80 nginx`
+host makinesinin ip adresi kullanılarak 55 numaralı port ile nginx e erişilebilir.
 
+## ÖRNEK
+
+`docker network create mysql-network`\
+`docker run --name c-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql` \
+`docker network connect mysql-network c-mysql`\
+`docker run --name phpmyadmin -d -e PMA_HOST=c-mysql -p 8080:80 phpmyadmin`\
+`docker network connect mysql-network phpmyadmin`
+
+docker host ipaddress i kullanılarak açılan pencerede kullanıcı adı **root** şifreside mysql container yaratılırken kullanılan *MYSQL_ROOT_PASSWORD* şifresi yani **my-secret-pw** dir.
