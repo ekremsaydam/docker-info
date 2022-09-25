@@ -24,7 +24,7 @@ loopback olarak kullanılmasını sağlar. Bu durumda container diğer container
 | `docker network connect br0 c_centos`| Belirtilen containerı belirtilen networke bağlar. Otomatik olarak ip adresi sistem tarafından verilir. [docker network connect](https://docs.docker.com/engine/reference/commandline/network_connect/)|
 | `docker network disconnect bridge c_centos`|Bridge networkünden belirtilen konteynerın network bağlantısını iptal eder. [docker network disconnect](https://docs.docker.com/engine/reference/commandline/network_disconnect/)|
 | `docker network rm br0`|Varolan ağı siler. Silinmesi için herhangi bir container e connect olmaması gereklidir. [docker network rm](https://docs.docker.com/engine/reference/commandline/network_rm/)|
-| `docker container inspect c_ubuntu | grep IPAd`|Belirtilen container a ait ip adreslerini kısadan yoldan listeler. [docker container inspect](https://docs.docker.com/engine/reference/commandline/container_inspect/)|
+| `docker container inspect c_ubuntu \| grep IPAd`|Belirtilen container a ait ip adreslerini kısadan yoldan listeler. [docker container inspect](https://docs.docker.com/engine/reference/commandline/container_inspect/)|
 
 
 ## ORNEK
