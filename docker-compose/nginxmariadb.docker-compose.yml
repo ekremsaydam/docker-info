@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+  redis:
+    depends_on:
+      - nginx
+    image: redis
+    ports:
+      - "8080:80"

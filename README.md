@@ -244,6 +244,7 @@ https://docs.docker.com/config/containers/resource_constraints/
 | `docker volume ls` | Belirtilen volume ile ilgili detay bilgi gösterir. [docker volume ls](https://docs.docker.com/engine/reference/commandline/volume_ls/)|
 | `docker volume rm 649518d850bcc5c3905a6cd989f977651b4f909d3ce18618d1d3f73fed93da99` <br><br> `docker volume rm volumeTest` | Belirtilen volume ile silinir. Dikkat edilmesi gereken nokta çalışan container a bağlı bir volume silinemez. [docker volume rm](https://docs.docker.com/engine/reference/commandline/volume_rm/)|
 | `docker volume prune` | Herhangi bir container a bağlı olmayan volume ler siliniz. [docker volume prune](https://docs.docker.com/engine/reference/commandline/volume_prune/)|
+| `docker container run -v /home/devops/hostdir/:/serverdir/ -w /serverdir -t -i ubuntu bash` | Docker host üzerindeki bir klasörü docker container içerisinden erişilebilir hale getirmek. [docker container run](https://docs.docker.com/engine/reference/commandline/run/)|
 
 
 # CONTAINER KAYNAKLARININ GUNCELLENMESI

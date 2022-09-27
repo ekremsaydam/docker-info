@@ -1,0 +1,10 @@
+services:
+  frontend:
+    image: nginx
+    networks:
+      - front-tier
+      - back-tier
+
+networks:
+  front-tier:
+  back-tier:
