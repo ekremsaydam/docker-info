@@ -2,6 +2,12 @@
 Büyük yapılar için web sunucuları, veritabanı utgulamaları, caching mekanizmaları, mikro servisler, back end servisleri gibi birbirine bağlı olarak çalışan birçok uygulamayı ayrı ayrı oluşturmak yerine tek seferde oluşturarak zamandan tasarruf etmek için docker compose kullanılır. Dockerfile tek bir container yaratmak ve çalıştırmak için kullanılırken docker-compose birden fazla çoklu container oluşturmamıza olanak sağlar.
 
 ## docker compose on ubuntu
+Kısa yükleme
+`sudo apt-get install docker-compose`
+
+<hr>
+
+
 [INSTALL](https://docs.docker.com/compose/install/linux/)
 
 `sudo apt-get update`\

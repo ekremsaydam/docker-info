@@ -94,6 +94,11 @@ NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sür�
 16. Bilgisayar restart edilir.\
 `reboot`
 
+*17. En kısa kurulum. Eski sürümleri yükler. docker-compose ve docker-machine komutlarını kullanabilmek için bu şekilde yükleme yapılabilir. BU YÜKLEME İSTEĞE BAĞLIDIR.*\
+`snap install docker`
+
+<hr>
+
 # DOCKER IMAGE
 Popüler olarak kullanılan birçok uygulamanın resmi imajları kendi üreticisi tarafından [Docker Hub](https://hub.docker.com/search?q=) üzerinde yayınlanmaktadır.
 
