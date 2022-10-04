@@ -44,6 +44,13 @@
 [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/).\
 [Docker Engine release notes](https://docs.docker.com/engine/release-notes/)
 
+
+![Docker Engine](/img/comparison_of_server_systems.png)
+
+![Docker Engine](/img/docker_engine.png)
+
+![Docker Engine](/img/container_layers.png)
+
 1. Eski sürümü aldırmak için kullanılır.\
 `sudo apt-get remove docker docker-engine docker.io containerd runc`
 
@@ -51,24 +58,35 @@
 `sudo apt-get update`
 
 3. Gerekli paket kurulumlarını yapınız.\
-`sudo apt-get install ca-certificates curl gnupg lsb-release`
+<pre>
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+</pre>
 
 4. Docker'ın resmi GPG anahtarını ekleyin\
-`sudo mkdir -p /etc/apt/keyrings` \
+`sudo mkdir -p /etc/apt/keyrings` <br><br>
 `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg`
 
 5. En son kararlı sürümü apt-get ile kurabilme için kullanılmalıdır.\
-`echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null`
+<pre>
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+</pre>
 
 6. apt paketlerini güncelleyiniz.\
 `sudo apt-get update`
 
 7. Docker engine ve docker containerin son sürümlerini yükleme\
-`sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin`\
+`sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin`
+<br><br>
 NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sürümünü yüklemek için depodaki kullanılabilir sürümleri listelemek için kullanılır. `sudo apt-get install docker-ce=<VERSION_STRING> docker-ce-cli=<VERSION_STRING> containerd.io docker-compose-plugin` komutu ile istenilen sürüm yüklenebilir.
 
 8. Docker yüklenip yüklenmediğinin kontrolü \
-`docker --version`
+`sudo docker --version`
 
 9. docker durum bilgisi kontrol edilir.\
 `sudo systemctl status docker`
@@ -83,7 +101,7 @@ NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sür�
 `dockerd-rootless-setuptool.sh install`
 
 13. Güvenlik açısından root kullanıcısı yerine farklı bir kullanıcı ile docker kullanılması tercih edilmelidir.\
-`sudo usermod -aG docker devops`
+`sudo usermod -aG docker $USER`
 
 14. docker servisi yeniden başlatılır.\
 `sudo systemctl restart docker`
@@ -92,10 +110,24 @@ NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sür�
 `sudo systemctl status docker`
 
 16. Bilgisayar restart edilir.\
-`reboot`
+`sudo reboot`
 
 *17. En kısa kurulum. Eski sürümleri yükler. docker-compose ve docker-machine komutlarını kullanabilmek için bu şekilde yükleme yapılabilir. BU YÜKLEME İSTEĞE BAĞLIDIR.*\
-`snap install docker`
+`sudo snap install docker`\
+`sudo apt-get install -y uidmap`\
+`dockerd-rootless-setuptool.sh install`
+
+*NOT: alternatif install [Install using the convenience script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)*
+`sudo snap install curl`\
+`curl -fsSL https://get.docker.com -o get-docker.sh`\
+`DRY_RUN=1 sh ./get-docker.sh`\
+`sudo sh get-docker.sh`\
+`sudo apt-get install -y uidmap`\
+`dockerd-rootless-setuptool.sh install --force`\
+`sudo apt-get update`\
+`sudo apt-get install virtualbox`\
+`sudo snap install docker`
+`sudo apt-get install virtualbox—ext–pack`
 
 <hr>
 
@@ -107,6 +139,7 @@ Docker linux yerel imaj deposu:
 
 | Command        | Description |
 | -------------- | ----------- |
+| `docker version`  | Docker Engine yüklü bilgisayarın hangi versiyon ve hangi işletim sistemi üzerine konumlandığı bilgileri gösterilir.. [docker version](https://docs.docker.com/engine/reference/commandline/version/)|
 | `docker info`  | Docker kurulumu ile ilgili sistem genelindeki bilgileri gösterir. [docker info](https://docs.docker.com/engine/reference/commandline/info/)|
 | `docker images`  | Yüklü imajları listelemek için kullanılır [docker images](https://docs.docker.com/engine/reference/commandline/images/) |
 | `docker image ls`   | Yüklü imajları listelemek için kullanılır.<br> **REPOSITORY:** hangi repodan çekildiği bilgisini gösterir. TAG: imajın versiyonunun gösterir. <br>**IMAGE ID:** her docker için farklı bir kimlik olup 64 karakterden oluşur. İlk 12 karakteri gösterilir. İmajın 12 karakterlik kısmı kullanılarakda işlem yapılabilir. <br>**CREATED:** imajın oluşturulduğu tarihi gösterir.<br>**SIZE:**imajın bıyutunu gösterir. NOT: ID numaraları ile işlem yaparken hızdan tasarruf etmek adına kimlik numarasının benzersiz olan ilk karakterleri kullanılarak da imaj üzerinde işlemyapılabilir. [docker image](https://docs.docker.com/engine/reference/commandline/image/) \|[docker image ls](https://docs.docker.com/engine/reference/commandline/image_ls/)|
@@ -145,11 +178,13 @@ Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sistem
 | Command        | Description |
 | -------------- | ----------- |
 | `docker container ls`<br><br>`docker ps`<br><br>`docker container ls -a`<br><br>`docker ps -a`  | Çalışan containerları göstermek için kullanılır. [docker container ls](https://docs.docker.com/engine/reference/commandline/container_ls/)|
-| `docker container run alpine:latest ls -a`  | Belirtilen imaj içerisinde ls -a komutunu çalıştırır ve container çalışmasını durdurur. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker container run alpine:latest ls -a`  | Belirtilen imaj içerisinde ls -a komutunu çalıştırır ve container çalışmasını durdurur. docker container [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) <br><br>*Image üzerinden bir container yaratıldığı zaman varsayılan olarak çalıştırılması için ayarlanmış bir uygulama vardır. Bu uygulama çalıştığı sürece container ayakta kalır. Uygulama çalışmasını sonlandırdığında container da kapatılır.* <br><br> *Docker container çalıştırıldığında-başlatıldığında image içerisinde birden fazla uygulama barındırsa da sadece tek bir uygulamanın otomatik olarak çalıştırılmasına izin verir.* <br><br> *varsayılan olarak çalıştırılması öngörülen image ile beraber gelen uygulamayı container oluşturulurken değiştirebiliriz.* |
+| `docker container run --name calpine -d -it alpine sh`  | Belirtilen `sh` komutu `-d --detach` `-i --interactive` ve `-t --tty` modda çalıştırılır. Burada çalıştırılan uygulama PID id 1 ile container içerisinde çalışmaya devam eder. docker da bu PID id yi izleyerek container yaşamına devam ederi. ![docker container run](/img/docker_container_p14.png) |
+| `docker container kill -s 9 centoscon`  | Belirtilen container sonlandırmak için değer gönderir. [docker container kill](https://docs.docker.com/engine/reference/commandline/kill/) [SIGNAL](https://man7.org/linux/man-pages/man7/signal.7.html) . <br><br>Linux üzerinde `kill -l` signal değerleri buradan da görüntülenebilir. <br><br>`ps aux` yada `ps` komutu ile PID id ler görüntülenebilir. |
 | `docker container run --interactive --tty  centos /bin/bash`<br><br>`docker container run -it centos /bin/bash` <br><br>**`docker run -itd centos /bin/bash`** | **-i --interactive**=> interactive terminal <br> **-t -tty** => TTY pseudo terminal. <br><br>Belirtilen imaj başlatılır ve bash kabuğu üzerinden sanal bir terminal üzerinden etkileşimli bağlantı oluşturulurur. <br> Centos imajı üzerinden bir container ayağa kaldırır ve interaktif bash ile ona bağlanır. <br> **NOT:** <br> - **CTRL+Q+P** tuş kombinasyonu ile çıkış yapılabilir. Bu kombinasyonla çıkış yapılması **containerin çalışmasını durdurmaz.** <br> - Bash kabuğunda çalışırken **exit** komutu ile çıkılabilir. Bu **bash kabuğunun sonlanmasına neden olur**. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) ![docker container run](/img/docker_container_p11.png)|
 | `docker container stats 33c657b76ca8` | Çalışan Containerın kaynak kullanımını gösterir. [docker container stats](https://docs.docker.com/engine/reference/commandline/container_stats/) |
 | `docker container attach 78b324e4e06c`<br><br>`docker attach 78b324e4e06c` | Çalışan container a bağlanılmasını sağlar. [docker container attach](https://docs.docker.com/engine/reference/commandline/container_attach/) ![docker container rm](/img/docker_container_p1.png)|
-| `docker container rm ebbfd968b330` <br><br>`docker container rm ebbfd968b330 -f`| container i siler. container silinmesi için durmuş olması gerekir. **-f --force** parametresi ile çalışan kontainer da silinir. [docker container rm](https://docs.docker.com/engine/reference/commandline/container_rm/)|
+| `docker container rm ebbfd968b330` <br><br>`docker container rm ebbfd968b330 -f`| container i siler. <br><br> *container silinmesi için durmuş olması gerekir.*<br><br> **-f --force** parametresi ile çalışan kontainer da silinir. [docker container rm](https://docs.docker.com/engine/reference/commandline/container_rm/)|
 | `docker container run --interactive --tty --detach centos /bin/bash`<br><br> `docker container run -itd centos /bin/bash`| Konteynerin arka planda çalıştırılmasını sağlar. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker container commit 092 new_centos`| Varolan bir container üzerinden yeni bir imaj oluşturur ve yerel olarak images arasına kaydeder.  [docker container commit](https://docs.docker.com/engine/reference/commandline/container_commit/) ![docker container commit](/img/docker_container_p2.png)|
 | `docker container cp 092:/liste.txt .` | Belirtilen container içindeki dosyaları bulunulan dizine kopyalar [docker container cp](https://docs.docker.com/engine/reference/commandline/container_cp/) ![docker container cp](/img/docker_container_p3.png)|
@@ -173,7 +208,10 @@ Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sistem
 | `docker container start fa`| Belirtilen durmuş (stop) containerı çalıştırır. [docker container start](https://docs.docker.com/engine/reference/commandline/container_start/) ![docker container start](/img/docker_container_p8.png)|
 | `docker container port 660c0b8819d0`| Belirtilen containerın port maping bilgilerini gösterir. [docker container port](https://docs.docker.com/engine/reference/commandline/container_port/) ![docker container port](/img/docker_container_p9.png)|
 | `docker container rm 660c0b8819d0 -f`| Belirtilen container veya containerları force (-f) silmeye zorlar. [docker container rm](https://docs.docker.com/engine/reference/commandline/container_rm/) ![docker container rm](/img/docker_container_p10.png)|
+| `docker container run --rm -it alpine sh`| Paremetre olarak `--rm` ile başlatılan container durdurulduğu anda containerın silinmesi sağlanır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker container top 33c657b76ca8`| Belirtilen container için çalışan programları gösterir. [docker container top](https://docs.docker.com/engine/reference/commandline/container_top/) |
+| `docker container run --name cnginx -p 80:80 nginx`| Belirtilen container için bir isim verilir. İlk kısım ingilizce sıfatlardan oluşur. İkinci kısım ise bilişim dünyasındaki tanınan isimlerden oluşur. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) |
+
 
 # DOCKER CONTAINER KAYNAK KULLANIMI
 
@@ -241,15 +279,30 @@ https://docs.docker.com/config/containers/resource_constraints/
 
 # VOLUME ILE CALISMAK
 
+Container dışında veri saklamak için kullanılır. Bir containerda sorun olduğunda yeni bir container oluşturup aynı volume kullanmasını sağlayabiliriz.
+
+Farklı container lar arasında yaratılan bir volume ortak olarak kullanılabilir.
+
+<hr>
+
+1. Eğer bir volume container içerisine mount edildiğinde image içerisinde mount edildiği klasör mevcut değil ise klasör yaratılır ve volume içerisinde hangi dosyalar var ise o dosyalar görüntülenir.
+
+2. Bir volume imaj içerisinde mevcut bir klasöre mount edilir ise: \
+a. image içerisindeki klasör boş veya dosya var ise volume içerisinde hangi dosya var ise o dosyalar görüntülenir.\
+b. image içerisinde ki klasörde dosya var ise ve volume boş ise bu sefer o klasördeki dosyalar volume kopyalanır.
+
+
+
 | Command        | Description |
 | -------------- | ----------- |
 | `docker volume create`  | Docker volume bağlantı noktası oluşturur. Bu bağlantı ismi 64 karakterden oluşan bir hex bilgisi volume ismini oluşturur. [docker volume create](https://docs.docker.com/engine/reference/commandline/volume_create/)|
 | `docker volume create --name volumeTest`  | Yeni bir volume yaratırken isim verilerek bir volume yaratılır.  [docker volume create](https://docs.docker.com/engine/reference/commandline/volume_create/)|
 | `docker volume inspect volumeTest` <br><br> `docker inspect volumeTest` | Belirtilen volume ile ilgili detay bilgi gösterir. [docker volume inspect](https://docs.docker.com/engine/reference/commandline/volume_inspect/) ![docker container rm](/img/docker_volume_p1.png)|
 | `docker volume ls` | Belirtilen volume ile ilgili detay bilgi gösterir. [docker volume ls](https://docs.docker.com/engine/reference/commandline/volume_ls/)|
-| `docker volume rm 649518d850bcc5c3905a6cd989f977651b4f909d3ce18618d1d3f73fed93da99` <br><br> `docker volume rm volumeTest` | Belirtilen volume ile silinir. Dikkat edilmesi gereken nokta çalışan container a bağlı bir volume silinemez. [docker volume rm](https://docs.docker.com/engine/reference/commandline/volume_rm/)|
+| `docker volume rm 649518d850bcc5` <br><br> `docker volume rm volumeTest` | Belirtilen volume ile silinir. Dikkat edilmesi gereken nokta çalışan container a bağlı bir volume silinemez. [docker volume rm](https://docs.docker.com/engine/reference/commandline/volume_rm/)|
 | `docker volume prune` | Herhangi bir container a bağlı olmayan volume ler siliniz. [docker volume prune](https://docs.docker.com/engine/reference/commandline/volume_prune/)|
 | `docker container run -v /home/devops/hostdir/:/serverdir/ -w /serverdir -t -i ubuntu bash` | Docker host üzerindeki bir klasörü docker container içerisinden erişilebilir hale getirmek. [docker container run](https://docs.docker.com/engine/reference/commandline/run/)|
+| `docker volume create ilkvolume` <br><br> `docker container run -it -v ilkvolume:/deneme3:ro ubuntu sh` | Daha önce oluşturulmuş `ilkvolume` adındaki volume yi read only olarak oluşturulacak olan container ile kullanılması sağlamak. [docker container run](https://docs.docker.com/engine/reference/commandline/run/) <br> ![docker volume](/img/docker_volume_p2.png)|
 
 
 # CONTAINER KAYNAKLARININ GUNCELLENMESI

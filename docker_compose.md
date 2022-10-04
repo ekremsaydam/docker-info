@@ -17,25 +17,32 @@ Kısa yükleme
 
 Komut satırında docker-compose komutu ile çalışmak için ve intellisense
 
-> `DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}`
+<pre>
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+</pre>
 
-> `mkdir -p $DOCKER_CONFIG/cli-plugins`
+<pre>
+mkdir -p $DOCKER_CONFIG/cli-plugins
+</pre>
 
-> `curl -SL https://github.com/docker/compose/releases/download/v2.11.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose`
+<pre>
+curl -SL https://github.com/docker/compose/releases/download/v2.11.2/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+</pre>
 
-> `chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose`
-
-> `sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose`
+<pre>
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+</pre>
 
 > `docker compose version`
 
-> `curl -SL https://github.com/docker/compose/releases/download/v2.11.1/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose`\
-veya\
-`cp $DOCKER_CONFIG/cli-plugins/docker-compose /usr/local/bin/docker-compose`
+> `sudo cp $DOCKER_CONFIG/cli-plugins/docker-compose /usr/local/bin/docker-compose`
 
+>`sudo chmod +x /usr/local/bin/docker-compose`\
+veya\
 > `sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose`
 
-
+intellicence için
+> `sudo apt-get install docker-compose`
 # docker-compose.yml dosyası Hazırlama
 
 
