@@ -2,9 +2,14 @@
 
 docker container seviyesinde network yönetmek için kullanılır.\
 Ethernet Bridge arayüzü **docker0** adıyla gelir. Host tarafından docker0 kontrol edilerek görüntülenebilir.
-![ifconfig](img/docker_network_p1.png)
+![ifconfig](img/docker_network_host.png)
 
 ## DOCKET NETWORK TİPLERİ
+
+[Network containers](https://docs.docker.com/engine/tutorials/networkingcontainers/)
+
+![docker0](/img/docker_network_docker0_bridge.png)
+
 ![ifconfig](img/docker_network_p2.png)
 ### **1. bridge**
 IP, subnet ve gateway otomatik olarak container a atanır. container dış dünya ile host üzerinden internet ile haberleşebilir. Ancak dış dünyadan bu container a erişilebilmesi için port yönlendirmesi yapılması gerekir.\
@@ -25,6 +30,8 @@ loopback olarak kullanılmasını sağlar. Bu durumda container diğer container
 | `docker network disconnect bridge c_centos`|Bridge networkünden belirtilen konteynerın network bağlantısını iptal eder. [docker network disconnect](https://docs.docker.com/engine/reference/commandline/network_disconnect/)|
 | `docker network rm br0`|Varolan ağı siler. Silinmesi için herhangi bir container e connect olmaması gereklidir. [docker network rm](https://docs.docker.com/engine/reference/commandline/network_rm/)|
 | `docker container inspect c_ubuntu \| grep IPAd`|Belirtilen container a ait ip adreslerini kısadan yoldan listeler. [docker container inspect](https://docs.docker.com/engine/reference/commandline/container_inspect/)|
+| `docker container run -it --name net_host_nginx --network host nginx bash`|Bir container yaratarak interactive modda terminal bağlantısı yaparak docker host networkleri ile aynı ayarları kullacak şekilde bir container ayağa kaldırılıyor.|
+| `docker container run -it --name host_net_nginx --network none nginx bash`|Bir container yaratarak interactive modda terminal bağlantısı yaparak internet bağlantısı olmadan bir container ayağa kaldırılıyor.|
 
 
 ## ORNEK
@@ -65,6 +72,18 @@ En sık kullanılan format 1. formattır. Örnek olara\
 host makinesinin ip adresi kullanılarak 55 numaralı port ile nginx e erişilebilir.
 
 ## ÖRNEK
+
+`docker container run -d --name cnginx nginx`\
+`docker container inspect cnginx`\
+`docker exec -it cnginx bash`\
+`apt-get update`\
+`apt-get install net-tools`\
+`ifconfig`\
+`apt-get install iputils-ping`\
+`ping www.google.com`\
+`apt-get install procps`\
+`ps aux`
+<hr>
 
 `docker network create mysql-network`\
 `docker run --name c-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql` \

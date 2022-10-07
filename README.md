@@ -39,19 +39,29 @@
 >`sudo apt list --upgradable`\
 >`sudo apt-get upgrade`\
 >`sudo apt-get dist-upgrade`
-
-## 2. INSTALL DOCKER ENGINE on Ubuntu
-[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/).\
-[Docker Engine release notes](https://docs.docker.com/engine/release-notes/)
-
+## 2. WHAT IS DOCKER
+Docker Container tanıtım videosu
+[The future of Linux Containers](https://www.youtube.com/watch?v=wW9CAH9nSLs)
 
 ![Docker Engine](/img/comparison_of_server_systems.png)
+
+![Docker's History of contribution to the OCI](img/docker_history_of_contribution_to_the_OCI.png)
 
 ![Docker Engine](/img/docker_engine.png)
 
 ![Docker Engine](/img/container_layers.png)
 
-1. Eski sürümü aldırmak için kullanılır.\
+![docker engine enterprise](/img/docker_engine_enteprise.png)
+
+
+### 2.1 INSTALL DOCKER ENGINE on Ubuntu
+[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/).\
+[Docker Engine release notes](https://docs.docker.com/engine/release-notes/)
+
+Docker kurulumuna sahip değilseniz aşağıdaki linkten docker üzerinde çalışabilirsiniz.
+[play-with-docker](https://labs.play-with-docker.com/)
+
+1. Eski sürümü kaldırmak için kullanılır.\
 `sudo apt-get remove docker docker-engine docker.io containerd runc`
 
 2. Apt paketlerini güncelleyiniz.\    
@@ -191,6 +201,7 @@ Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sistem
 | `docker container create centos` | Belirtilen imajdan bir container oluşturur. [docker container create](https://docs.docker.com/engine/reference/commandline/container_create/) <br> **NOT:** Eğer imaj local de yoksa hub.docker.com üzerinden indirir.|
 | `docker container diff 36` | Belirtilen container_name dosya sistemi üzerindeki dosyalarda veya klasörlerde yapılan değişiklikleri gösterir. [docker container diff](https://docs.docker.com/engine/reference/commandline/container_diff/) ![docker container cp](/img/docker_container_p4.png)|
 | `docker container exec 36 cat /etc/resolv.conf` | Belirtilen containerid si üzerinde bir komut(cat gibi) çalıştırmak için kullanılır. [docker container exec](https://docs.docker.com/engine/reference/commandline/container_exec/) ![docker container exec](/img/docker_container_p5.png)|
+| `docker container run --name cnginx -d -it -p 80:80 nginx` <br><br> `docker container exec -it cnginx bash` |Çalışan bir container üzerinde bash çalıştırarak terminalden bağlantı kuracaktır. [docker container exec](https://docs.docker.com/engine/reference/commandline/container_exec/) |
 | `docker container export 36 --output exportcentos.tar`<br><br>`docker container export 36 -o exportcentos.tar` | Çalışan bir containerı tar dosyası olarak export eder. [docker container export](https://docs.docker.com/engine/reference/commandline/container_export/) |
 | `docker container inspect 36` | Çalışan bir container hakkında bilgi verir. [docker container inspect](https://docs.docker.com/engine/reference/commandline/container_inspect/) |
 | `docker container kill 36` | Belirtilen container idsini durdurur. [docker container kill](https://docs.docker.com/engine/reference/commandline/container_kill/) ![docker container kill](/img/docker_container_p6.png) |
@@ -278,7 +289,7 @@ https://docs.docker.com/config/containers/resource_constraints/
 
 
 # VOLUME ILE CALISMAK
-
+[Use volumes](https://docs.docker.com/storage/volumes/)\
 Container dışında veri saklamak için kullanılır. Bir containerda sorun olduğunda yeni bir container oluşturup aynı volume kullanmasını sağlayabiliriz.
 
 Farklı container lar arasında yaratılan bir volume ortak olarak kullanılabilir.
@@ -290,6 +301,11 @@ Farklı container lar arasında yaratılan bir volume ortak olarak kullanılabil
 2. Bir volume imaj içerisinde mevcut bir klasöre mount edilir ise: \
 a. image içerisindeki klasör boş veya dosya var ise volume içerisinde hangi dosya var ise o dosyalar görüntülenir.\
 b. image içerisinde ki klasörde dosya var ise ve volume boş ise bu sefer o klasördeki dosyalar volume kopyalanır.
+
+<hr>
+
+[bind-mounts](https://docs.docker.com/storage/bind-mounts/)\
+![bind-mounts](/img/types-of-mounts-bind.png)
 
 
 
@@ -303,6 +319,7 @@ b. image içerisinde ki klasörde dosya var ise ve volume boş ise bu sefer o kl
 | `docker volume prune` | Herhangi bir container a bağlı olmayan volume ler siliniz. [docker volume prune](https://docs.docker.com/engine/reference/commandline/volume_prune/)|
 | `docker container run -v /home/devops/hostdir/:/serverdir/ -w /serverdir -t -i ubuntu bash` | Docker host üzerindeki bir klasörü docker container içerisinden erişilebilir hale getirmek. [docker container run](https://docs.docker.com/engine/reference/commandline/run/)|
 | `docker volume create ilkvolume` <br><br> `docker container run -it -v ilkvolume:/deneme3:ro ubuntu sh` | Daha önce oluşturulmuş `ilkvolume` adındaki volume yi read only olarak oluşturulacak olan container ile kullanılması sağlamak. [docker container run](https://docs.docker.com/engine/reference/commandline/run/) <br> ![docker volume](/img/docker_volume_p2.png)|
+| `docker container run --name cnginx -d -it -p 80:80 -v /mnt/hgfs/DEV/:/usr/share/nginx/html nginx` | Bind mounts yöntemi kullanılarak docker host üzerindeki bir klasörü docker container içerisindeki klasöre mount etmek. Bu yöntem production ortamında kullanılmamalıdır. Bunun yerine volume mount işlemi kullanılmalıdır. [bind-mounts](https://docs.docker.com/storage/bind-mounts/)|
 
 
 # CONTAINER KAYNAKLARININ GUNCELLENMESI
@@ -311,3 +328,8 @@ b. image içerisinde ki klasörde dosya var ise ve volume boş ise bu sefer o kl
 `docker ps`\
 `docker container inspect c_busybox | grep CpuSha`\
 **`docker container update --cpu-shares 500 c_busybox`**
+
+
+# DOCKER PLUGIN-DRIVER
+[Use Docker Engine plugins](https://docs.docker.com/engine/extend/legacy_plugins/#use-docker-engine-plugins)\
+![docker_plugins_drivers](/img/docker_plugins_drivers.png)
