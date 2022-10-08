@@ -161,6 +161,7 @@ Docker linux yerel imaj deposu:
 | `docker image pull alpine`  | : öncesi repository adını sonra gelen tag bölümü de imaja ait versiyonu göstermektedir. TAG bölümü belirtilmez ise latest kabul edilir. NOT: latest ifadesi güncel imajı işaret ettiğini garanti etmez. |
 | `docker image pull alpine:3`  | : öncesi repository adını sonra gelen tag bölümü de imaja ait versiyonu göstermektedir. |
 | `docker image pull alpine -a`  | -a parametresi ile bir imajın bütün versiyonları indirilebilir. |
+| `docker image pull gcr.io/google-containers/busybox`  | hub.docker.com dışındaki bir repository üzerinden [google busybox](https://console.cloud.google.com/gcr/images/google-containers/global/busybox) image download edilmesi.|
 | `docker image inspect nginx:latest`  | belirtilen imaj ile ilgili ayrıntılı bilgi gösterir. [docker image inspect](https://docs.docker.com/engine/reference/commandline/image_inspect/) |
 | `docker image rm nginx:latest`  | imaj_name olarak belirtilen imajı siler. <br>**NOT**: Bir container a ait imaj silinemez. Öncesinde imajın bağlı bulunan container ın durdurulması gereklidir. [docker image rm](https://docs.docker.com/engine/reference/commandline/image_rm/) |
 | `docker rmi alpine:3`  | Belirtilen imajı siler. [docker rmi](https://docs.docker.com/engine/reference/commandline/rmi/) |
@@ -221,10 +222,20 @@ Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sistem
 | `docker container rm 660c0b8819d0 -f`| Belirtilen container veya containerları force (-f) silmeye zorlar. [docker container rm](https://docs.docker.com/engine/reference/commandline/container_rm/) ![docker container rm](/img/docker_container_p10.png)|
 | `docker container run --rm -it alpine sh`| Paremetre olarak `--rm` ile başlatılan container durdurulduğu anda containerın silinmesi sağlanır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker container top 33c657b76ca8`| Belirtilen container için çalışan programları gösterir. [docker container top](https://docs.docker.com/engine/reference/commandline/container_top/) |
-| `docker container run --name cnginx -p 80:80 nginx`| Belirtilen container için bir isim verilir. İlk kısım ingilizce sıfatlardan oluşur. İkinci kısım ise bilişim dünyasındaki tanınan isimlerden oluşur. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) |
+| `docker container run -p 80:80 nginx`| Belirtilen container için bir isim verilir. İlk kısım ingilizce sıfatlardan oluşur. İkinci kısım ise bilişim dünyasındaki tanınan isimlerden oluşur. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) |
+| `docker container run --name cnginx -p 80:80 nginx`| Belirtilen container için cnginx isimi verilir. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) |
+| `docker container run -it --env ilkEnv=Degerim1 --env=ikinci=Degerim2 ubuntu bash`<br><br> `printenv`| Container oluşturulurken içerisinde kullanılacak environment oluşturularak işlem yapılması sağlanır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) ![environment variables](/img/docker_environment_p1.png)<br><br> ![environment variables](/img/docker_environment_windows_p2.png) |
+| `docker container run -it --env=USER ubuntu bash`| docker host üzerindeki varolan envronment variable ı container oluşturulurken liçerisinde kullanılacak environment olarak kullanılması sağlanabilir. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) ![environment variables](/img/docker_environment_p3.png) |
+| `docker container run -it --env-file env.list ubuntu bash`| Birden fazla environment variables tanımlaması yapabilmek için bir dosyada variable lar toplanıp container oluşturulurken `--env-file` tanımlaması yapılabilir. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) ![environment variables](/img/docker_environment_p4.png) |
 
 
 # DOCKER CONTAINER KAYNAK KULLANIMI
+| Command        | Description |
+| -------------- | ----------- |
+| `docker top cnginx`  | Belirtilen container üzerinde çalışan uygulamaları görmek için kullanılır. Container içerisine girmemize gerek kalmadan çalışan uygulamalar görüntülenebilir. [docker top](https://docs.docker.com/engine/reference/commandline/top/)|
+| `docker stats` | Herhangi bir container ismi verilmez ise o anda çalışan bütün containerların CPU RAM NETWORK ve DOSYA IO kullanımları ile ilgili bilgiyi ekranda gösterir. [docker stats](https://docs.docker.com/engine/reference/commandline/stats/)|
+| `docker stats cnginx` | Belirtilen container ın ne kadar CPU RAM NETWORK ve DOSYA IO kullanımı ile ilgili bilgileri gösterir. [docker stats](https://docs.docker.com/engine/reference/commandline/stats/)|
+
 
 Sistem üzerinde başlatılan container ihtiyaç duyduğu kaynakları host makinesi üzerinden kullanır. Performans anlamında bu iyi bir durum değildir. Kaynak kullanımının sınırlandırılması gerekmektedir. Container başlatılırken kaynaklar sınırlandırılabilir. 
 
@@ -233,9 +244,11 @@ https://docs.docker.com/config/containers/resource_constraints/
 
 | Command        | Description |
 | -------------- | ----------- |
+| `--cpus=<value>`  | Bir container kullanabileceği mevcut CPU kaynaklarının ne kadarını kullanılacağını belirtir. Örneğin, ana makinenin iki CPU'su varsa ve --cpus="1.5" olarak ayarlarsanız, container ın CPU'ların en fazla bir buçuk tanesi garanti edilir. docker host üzerinde kaç tane core var ise onun sadece 1.5 tanesini kullanabilecektir. Bu, --cpu-period="100000" ve --cpu-quota="150000" ayarının eşdeğeridir. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
+| `--cpuset-cpus [<int>]` | `--cpus` ile belirtilen kullanılacak CPU ların hangilerinin olduğuna `--cpuset-cpus` ile karar verilir. Windows üzerinde task manager (görev yöneticisi) CPU seçeneği altında resource manager üzerindeki CPU tabında bulunan cpu ların 0 (sıfır) dan başlayarak docker host bilgisayarın kaç adet CPU bulunuyor ise (-1) ID numaraları ile cpu ataması yapılabilmesini sağlar. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
 | `--cpu-shares <int>`  | CPU kullanımının **bağıl değerini** gösterir. Varsayılan değeri 1024tür. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
-| `--cpus=<value>`  | Bir container kullanabileceği mevcut CPU kaynaklarının ne kadarını kullanılacağını belirtir. Örneğin, ana makinenin iki CPU'su varsa ve --cpus="1.5" olarak ayarlarsanız, container ın CPU'ların en fazla bir buçuk tanesi garanti edilir. Bu, --cpu-period="100000" ve --cpu-quota="150000" ayarının eşdeğeridir. [Configure the default CFS scheduler](https://docs.docker.com/config/containers/resource_constraints/#configure-the-default-cfs-scheduler)|
 | `--memory <bytes>`  | RAM in sınırlandırılması için kullanılır<br>NOT:<br> - bytes, kilobytes, megabytes, gigabytes olarak 4 farklı değer alır. Bunların kısaltmaları kullanılır. b, k, m, g<br>- izin verilen minimum değer 6m(6 megabayt) olur. [Limit a container’s access to memory](https://docs.docker.com/config/containers/resource_constraints/#limit-a-containers-access-to-memory)|
+| `--memory-swap <bytes>`  | `--memory-swap` değeri `--memory` değeri tanımlandı ise çalışacaktır. `--memory` değerinin tamamı tüketildiğinde bellek gereksinimi olduğu sürece diskin ne kadarlık bir alanının bellek olarak kullanılacağını belirtir. [--memory-swap details](https://docs.docker.com/config/containers/resource_constraints/#--memory-swap-details)|
 
 
 | Command        | Description |
@@ -246,11 +259,14 @@ https://docs.docker.com/config/containers/resource_constraints/
 | `docker run --name c_redis --cpu-shares 512 -d redis` | Redist için kalan yarısı ayrılmıştır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker run --name c_ninx --cpus 0.5 -d nginx` | Bir çekirdeğin yarısı konteynere atanır.<br>**NOT:**<br>	- cpus defauit değeri 0 dır. Bu kullanım oranında limit olmadığını gösteriri. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker run --name c_redis --cpus 0.5 -d redis` | Bir çekirdeğin yarısı konteynere atanır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker container run -d --cpus=1.5 --cpuset-cpus 0,3 nginx` | Bir buçuk çekirdeğin kullanılabileceği ve bu cpu idlerinin 0 ve 3 olduğunu belirtmek için kullanılır. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | `docker run --name c_apline --memory 500m -ti -d alpine` | 500megabyte memory atanması (500MB = 500 x 1024 x 1024 = 524288000 bytes) [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
+| `docker container run --memory 100MB --memory-swap 200MB -d nginx` | 100MB doldurulsa dahi swap alanından dolayı 200MB daha sistemden kullanabilecek. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | **`docker container update --cpu-shares 500 c_busybox`** | varolan ve çalışan bir container kaynağının güncelleştirilmesi. [docker container update](https://docs.docker.com/engine/reference/commandline/container_update/)  ![docker container rm](/img/docker_container_p13.png)|
-
-
 # ORNEKLER
+
+`docker container run --memory 100MB -d nginx`\
+`docker stats`
 ## CONTAINER YAŞAM DÖNGÜSÜ
 `docker container run -it -d ubuntu /bin/bash` * **NOT**: -d --detach Containerarka planda çalıştırır.* <br> 
 `docker ps` \

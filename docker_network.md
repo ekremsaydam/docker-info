@@ -1,7 +1,9 @@
 # [DOCKER NETWORK](https://docs.docker.com/engine/reference/commandline/network/)
 
 docker container seviyesinde network yönetmek için kullanılır.\
-Ethernet Bridge arayüzü **docker0** adıyla gelir. Host tarafından docker0 kontrol edilerek görüntülenebilir.
+Ethernet Bridge arayüzü **docker0** adıyla gelir. Host tarafından docker0 kontrol edilerek görüntülenebilir. 
+
+- **default bridge networkü üzerinde dns desteği yoktur.** Ancak kullanıcı tanımlı bridge networkü oluşturulduğunda docker container ismi ile containerların birbirleri arasında haberleşsin diye basit olarak bir dns kurulur ve container isimleri üzerinden işlem yapılması sağlanır.*\
 ![ifconfig](img/docker_network_host.png)
 
 ## DOCKET NETWORK TİPLERİ
@@ -92,3 +94,14 @@ host makinesinin ip adresi kullanılarak 55 numaralı port ile nginx e erişileb
 `docker network connect mysql-network phpmyadmin`
 
 docker host ipaddress i kullanılarak açılan pencerede kullanıcı adı **root** şifreside mysql container yaratılırken kullanılan *MYSQL_ROOT_PASSWORD* şifresi yani **my-secret-pw** dir.
+<hr>
+
+`docker network create --driver bridge --subnet 10.0.0.0/16 --ip-range 10.0.0.0/24 --gateway 10.0.0.10 kopru1`<br><br>
+`docker network inspect kopru1`\
+`docker container run -dit -p 80:80 --name websunucu --network kopru1 httpd:alpine sh`\
+`docker container run -dit -p 81:80 --name database --network kopru1 httpd:alpine sh`\
+`docker network connect bridge websunucu` (birde fazla networke bağlamak)\
+`docker network connect bridge database`\
+![docker network](/img/docker_network_p7.png)\
+`docker network disconnect bridge websunucu`\
+`docker network disconnect bridge database`\ 
