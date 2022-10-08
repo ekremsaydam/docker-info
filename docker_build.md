@@ -226,4 +226,6 @@ dockerfile içerisinde yazılan birden çok shell talimatları bir öncekini ge�
 | Command        | Description |
 | -------------- | ----------- |
 | `docker build --tag mycentos:v1 .` <br><br> `docker build -t mycentos:v2 .` <br><br>`docker build --tag mycentos:v1 --file mynewcentos .`<br><br>`docker build -t mycentos:v1 -f mynewcentos .`<br><br>`docker build -t gitcentos https://bit.ly/centosDockerfile`| dockerfile build alıp image oluşturmak için kullanılır. [docker build](https://docs.docker.com/engine/reference/commandline/build/)|
+| `docker image build --tag esaydam/pyapp .`| dockerfile build alıp image oluşturmak için kullanılır. [docker build](https://docs.docker.com/engine/reference/commandline/build/) <br><br> ![docker build](/img/docker_build_p9.png)|
+| `docker image history esaydam/pyapp:latest`| dockerfile build alıp image oluşturmak için kullanılır. [docker image history](https://docs.docker.com/engine/reference/commandline/image_history/) <br><br> ![docker image history](/img/docker_build_p10.png)|
 
