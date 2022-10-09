@@ -221,6 +221,7 @@ dockerfile içerisinde yazılan birden çok shell talimatları bir öncekini ge�
 `docker run -ti devcentos`\
 ![docker ignore](/img/docker_build_p8.png)
 
+> ## **NOT: Eğer dockerfile dosyası içerisinde yukarıdan aşağıya doğru çalıştırılan komutlar içerisinde çok fazla değişiklik yapılan dosyalara atıf var ise değişiklik yapılan dosyalar, dockerfile dosyasının sonlarına doğru olması docker image build işleminde yaatılan layer ların daha hızlı build işlemine tabi tutulması ve cache üzerinden işlem yapılmasını sağlayacaktır.**
 ## ORNEK
 
 | Command        | Description |

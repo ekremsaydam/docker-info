@@ -228,6 +228,8 @@ Sanal makine ile container teknolojisinin fark; sanal makine bir işletim sistem
 | `docker container run -it --env=USER ubuntu bash`| docker host üzerindeki varolan envronment variable ı container oluşturulurken liçerisinde kullanılacak environment olarak kullanılması sağlanabilir. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) ![environment variables](/img/docker_environment_p3.png) |
 | `docker container run -it --env-file env.list ubuntu bash`| Birden fazla environment variables tanımlaması yapabilmek için bir dosyada variable lar toplanıp container oluşturulurken `--env-file` tanımlaması yapılabilir. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/) ![environment variables](/img/docker_environment_p4.png) |
 
+> ## **NOT: image üzerinden hareketle bir container çalıştırılırken `docker container run --name cnginx -p 80:80 -it nginx bash` şeklinde oluşturulan bir container nginx servisi çalıştırılmayacaktır. image içerisinde container oluşturma aşamasında varsayılan olarak çalışması düşünülen servis yerine bash kabuğunun çalışması sağlanmış olur.**
+
 
 # DOCKER CONTAINER KAYNAK KULLANIMI
 | Command        | Description |
