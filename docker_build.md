@@ -372,3 +372,36 @@ NOT: İstenirse `--change` parametresi kullanılarak container dan image yapıl�
 `docker image ls -a`\
 `docker image load --input workimage.tar`\
 `docker image ls`
+
+# LINUX SHELL KISA BILGI
+>## ECHO
+console istenilen değeri çıktı olarak yazdırmak için kullanılır.\
+`printenv`\
+`echo $HOME`
+
+> ## > (büyüktür) İŞARETİ
+azılan komuttan sonra > işareti kullanılırsa çıktı olarak ekrana basılacak ifadenin yönelendirilerek bir dosyaya yazılması için kullanılır. Dosya önceden var ise silinir ve tekrar oluşturulur.
+
+> ## >> İŞARETİ
+yazılan komuttan sonra > işareti kullanılırsa çıktı olarak ekrana basılacak ifadenin yönelendirilerek bir dosyaya yazılması için kullanılır. Dosya daha önceden var ise dosya sonuna ekleme yapılır.
+
+>## & (ampersand) İŞARETİ
+Sonuna geldiği komutun çalışmasının sonuçlandırılmasını beklemez ve direkt shell ekranına tekrar düşer. Komut çalışması devam eder.
+
+>## | (pipe) İŞARETİ
+İki komutu birbirine bağlamak için kullanılır ve birinci komutun çıktısının ikinci komuta paremetre olarak verilmesini sağlar.
+
+>## ; (semicolon) İŞARETİ
+Tek satırda birden fazla komut çalıştırır. Çalıştırılan komutları birbirine bağlamaz.
+
+>## && (double ampersand) İŞARETİ
+Komutlar arasında kullanılır ve iki komutu birbirine birleştirir. 
+`komut1 && komut2`
+komut1 olumlu bir sonuç döndürdüğünde komut2 de çalışır. Ancak komut1 çalıştığında hata oluşursa komut2 çalışmaz.
+
+>## || (double pipe) İŞARETİ
+Komutlar arasında kullanılır ve iki komutu birbirine birleştirir. 
+`komut1 || komut2` komut1 olumlu bir sonuç döndürürse komut2 çalıştırılmaz. komut1 hatalı bir sonuç döndürürse komut2 çalışır.
+>## GREP komutu
+Arama için kullanılır.
+
