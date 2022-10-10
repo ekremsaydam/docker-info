@@ -208,11 +208,11 @@ dockerfile içerisinde yazılan birden çok shell talimatları bir öncekini ge�
 
 
 
->[dockerignore.dockerfile](examDockerFiles\dockerignore.dockerfile)\
+>[dockerignore.dockerfile](examDockerFiles/dockerignore.dockerfile)\
 `FROM centos`\
 `COPY . /home/configfile`
 
->[.dockerignore](examDockerFiles\.dockerignore)\
+>[.dockerignore](examDockerFiles/.dockerignore)\
 `*.txt`\
 `*.dockerfile`\
 `!*.png`
