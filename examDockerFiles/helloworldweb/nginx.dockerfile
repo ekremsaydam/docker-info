@@ -1,8 +1,6 @@
 FROM nginx:latest
 # image metadatasının tanımlanması
-LABEL maintainer="Firstname Lastname @firtlast"
-LABEL version="1.0"
-LABEL name="hello-docker"
+LABEL maintainer="Firstname Lastname @firtlast"  version="1.0" name="hello-docker"
 
 # environment variable
 ENV KULLANICI="administrator"

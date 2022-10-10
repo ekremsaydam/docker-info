@@ -232,7 +232,85 @@ dockerfile içerisinde yazılan birden çok shell talimatları bir öncekini ge�
 | `docker image build --tag esaydam/pywebflask --file pyweb.dockerfile .`<br><br>`docker container run --rm --publish 80:8000 -d --name pywebflask esaydam/pywebflask`| [pyweb.dockerfile](/examDockerFiles/pyweb/pyweb.dockerfile) build alıp image oluşturmak için kullanılır. Yaratılan image üzerinden bir container oluturularak docker host üzerindeki 80 portu expose edilir. [docker build](https://docs.docker.com/engine/reference/commandline/build/) |
 | `docker image build --tag esaydam/nodejsweb --file nodejs.dockerfile .`<br><br>`docker container run --rm --name nodejsweb -p 8080:8080 -d esaydam/nodejsweb`| [nodejs.dockerfile](/examDockerFiles/nodejsweb/nodejs.dockerfile) build alıp image oluşturmak için kullanılır. Yaratılan image üzerinden bir container oluturularak docker host üzerindeki 80 portu expose edilir. [docker build](https://docs.docker.com/engine/reference/commandline/build/) |
 | `docker image build --tag esaydam/hello-docker --file nginx.dockerfile .`<br><br>`docker container run -d --name hellodocker -p 80:80 esaydam/hello-docker`<br><br>`docker container ls`<br><br>`docker ps`| [nginx.dockerfile](/examDockerFiles/helloworldweb/nginx.dockerfile)<br><br>![nginx.dockerfile](/img/docker_dockerfile_example_p1.png)<br><br>![healtcheck](/img/docker_healthcheck_p1.png)<br><br>![nginx.dockerfile](/img/docker_container_run_env_web_p1.1.png) <br><br>![nginx.dockerfile](/img/docker_container_run_env_web_p1.png)|
+| `docker container run -d --name hellodocker -p 80:80 --env KULLANICI="newUser" esaydam/hello-docker`| dockerfile kullanılarak yaratılan image için dockerfile içerisinde environment variable değerleri container yaratılırken kullanıldığında override edilir. içerisindeki ![--env](/img/docker_container_run_env_web_p2.png)|
 
 
 
 ## **NOT: <br>RUN : image oluşturma aşamasında çalışır.<br>CMD : container oluşturma aşamasında çalışır.**
+
+## **NOT: FROM ifadesi ile kullanılan base image oluşturulurken kullanılan environment variable port expose vb. gibi değerler**
+
+
+<br>
+<br>
+
+# KISALTMALAR
+| Before         | After       |
+| -------------- | ----------- |
+|![LABEL](/img/docker_dockerfile_short_p01.png)| ![LABEL short](/img/docker_dockerfile_short_p02.png)|
+|![LABEL](/img/docker_dockerfile_short_p03.png)| ![LABEL short](/img/docker_dockerfile_short_p04.png)|
+# COPY - ADD FARKI
+- COPY, Docker host üzerinden dosya veya klasör kopyalamak için kullanılır.
+
+- ADD, dosya veya klasör kopyalamak için kullanılır. COPY komutundan farkı dosya kaynağı olarak bir URL bilgiside alabilir. 
+- ADD ile kaynak olarak docker host üzerinde bulunan bir tar dosyası belirtilir ise bu tar dosyası image içerisine sıkıştırılmış tar haliyle **değil** açılarak kopyalanır. 
+[addcmddiff.dockerfile](/examDockerFiles/addcmddiff/addcmddiff.dockerfile) <br> ![add cmd diff](/img/docker_dockerfile_add_cmd_p1.png)
+- ADD uzak sunucu üzerinden bir dosya çekecek ise ve tar.gz sıkıştırılmış bir dosya ise bu sefer açma işlemini **yapmaz**.
+[addcmddiff.dockerfile](/examDockerFiles/addcmddiff/addcmddiff.dockerfile) <br> ![add cmd diff](/img/docker_dockerfile_add_cmd_p2.png)
+
+# RUN - CMD FARKI
+- RUN image oluşturma esnasında çalıştırılır. Birden fazla kez Dockerfile içerisinde kullanılabilirken CMD container oluşturulurken çalışır ve bir kez kullanılabilir.
+<br><br>
+
+# CMD -ENTRYPOINT FARKI
+- Dockerfile hazırlarken mutlaka CMD veya ENTRYPOINT talimatı bulunmalıdır. Her iki talimatta Dockerfile ile oluşturulan imajdan container oluşturulmaya çalışıldığında çalışacak uygulamayı belirtmemizi sağlar. \
+[cmd.dockerfile](/examDockerFiles/entrypointcmd/cmd.dockerfile) <br> ![docker_dockerfile_entrypoint_cmd](/img/docker_dockerfile_entrypoint_cmd_p1.png)\
+[entrypoint.dockerfile](/examDockerFiles/entrypointcmd/entrypoint.dockerfile) <br> ![docker_dockerfile_entrypoint_cmd](/img/docker_dockerfile_entrypoint_cmd_p2.png)
+
+
+- ENTRYPOINT ile girilen komut container oluşturulurken değiştirilemez. CMD ile yazılan komut container oluşturulurken değiştirilebilir. \
+[cmd.dockerfile](/examDockerFiles/entrypointcmd/cmd.dockerfile) <br> ![docker_dockerfile_entrypoint_cmd](/img/docker_dockerfile_entrypoint_cmd_p3.png)\
+[entrypoint.dockerfile](/examDockerFiles/entrypointcmd/entrypoint.dockerfile) <br> ![docker_dockerfile_entrypoint_cmd](/img/docker_dockerfile_entrypoint_cmd_p4.png)
+
+- ENTRYPOINT ve CMD aynı anda kullanılırsa CMD de yazılan talimat ENTRYPOINT ile yazılan talimatın parametresi olarak çalışır. CMD container oluşturulurken değiştirilebildiği için ENTRYPOINT ile yazılan komutun parametreleri container oluşturulurken değiştirilebilir.
+Örneğin birden fazla versiyonu barındıran bir imajın içerisindeki uygulamanın container oluşturulurken istenilen versiyon ile başlatılması sağlanabilir. \
+[cmd_entrypoint.dockerfile](/examDockerFiles/entrypointcmd/cmd_entrypoint.dockerfile) <br> ![docker_dockerfile_entrypoint_cmd](/img/docker_dockerfile_entrypoint_cmd_p5.png)
+
+# CMD için EXEC FORM ve SHELL FORM AYRIMI
+| Kullanım       | Adı       |
+| -------------- | ----------- |
+|`CMD uygulama parametre`|SHELL FORM|
+|`CMD ["uygulama","parametre"]`|EXEC FORM|
+
+1. image oluşturulurken Dockerfile içerisinde CMD SHELL FORM kullanılarak bir uygulama çalıştırılacak ise oluşturulan container içerisineki PID 1 bu shell process olacaktır.
+![CMD SHELL FROM](/img/docker_dockerfile_cmd_exec_shell_p3.png)
+
+2. image oluşturulurken Dockerfile içerisinde CMD EXEC FORM kullanılarak bir uygulama çalıştırılacak ise oluşturulan container içerisineki PID 1 direkt bu komut olacaktır.
+![CMD SHELL FROM](/img/docker_dockerfile_cmd_exec_shell_p3.png)
+
+3. CMD EXEC FORM kullanılarak oluşturulmuş Dockerfile içerisinde çalıştırılan CMD satırında çalıştırılan komutun parametrelerinde ENV(Environment Variables) gibi değerlere(değişkenlere) erişilemez.\
+[cmdexecform.dockerfile](/examDockerFiles/cmdexecshell/cmdexecform.dockerfile) \
+[cmdshellform.dockerfile](/examDockerFiles/cmdexecshell/cmdshellform.dockerfile)
+![CMD EXEC FROM](/img/docker_dockerfile_cmd_exec_shell_p1.png) \
+![CMD SHELL FROM](/img/docker_dockerfile_cmd_exec_shell_p2.png)
+
+4. ENTRYPOINT ve CMD birlikte kullanılacaksa CMD EXEC FORM kullanılmalıdır. CMD SHELL FORM kullanıldığında ENTRYPOINT e parametre olarak aktarılamaz.
+<br><br>
+# MULTI-STAGE BUILD
+Dockerfile içerisinde bağzı nedenlerden dolayı birden fazla FROM ifaesi kullanılabilir. Örneğin build alınacak bir container ayrı olarak kullanılıp sonrasında production ortamında farklı bir container üzerinden hizmet sağlayabilir.
+
+[javajdk.dockerfile](/examDockerFiles/multistagebuild/javajdk.dockerfile)\
+`docker image build --tag esaydam/javaappjdk --file javajdk.dockerfile .`\
+`docker container run --name javaappjdk esaydam/javaappjdk`
+
+![multi stage build](/img/docker_dockerfile_multistagebuild_p1.png)
+`docker container cp javaappjdk:/usr/src/app/app.class .`
+[javajre.dockerfile](/examDockerFiles/multistagebuild/javajre.dockerfile)\
+`docker image build --tag esaydam/javaappjre --file javajre.dockerfile .`\
+![multi stage build](/img/docker_dockerfile_multistagebuild_p2.png)
+
+`docker container run --rm esaydam/javaappjre`
+[multistagebuild.dockerfile](/examDockerFiles/multistagebuild/multistagebuild.dockerfile)\
+`docker image build --tag esaydam/javaappmultistage --file multistagebuild.dockerfile .`
+
+![multi stage build](/img/docker_dockerfile_multistagebuild_p3.png)
