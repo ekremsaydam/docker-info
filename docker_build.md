@@ -297,7 +297,8 @@ dockerfile içerisinde yazılan birden çok shell talimatları bir öncekini ge�
 4. ENTRYPOINT ve CMD birlikte kullanılacaksa CMD EXEC FORM kullanılmalıdır. CMD SHELL FORM kullanıldığında ENTRYPOINT e parametre olarak aktarılamaz.
 <br><br>
 # MULTI-STAGE BUILD
-Dockerfile içerisinde bağzı nedenlerden dolayı birden fazla FROM ifaesi kullanılabilir. Örneğin build alınacak bir container ayrı olarak kullanılıp sonrasında production ortamında farklı bir container üzerinden hizmet sağlayabilir.
+Dockerfile içerisinde bazı nedenlerden dolayı birden fazla FROM ifaesi kullanılabilir. <br><br>
+Örneğin yazmış oldumuz java programı için build alınacak bir container ayrı olarak kullanılıp build alınıp sonrasında production ortamına build alınmış halinin dosyaları kopyalanarak ayrı bir container üzerinden hizmet sağlayabilir.
 
 [javajdk.dockerfile](/examDockerFiles/multistagebuild/javajdk.dockerfile)\
 `docker image build --tag esaydam/javaappjdk --file javajdk.dockerfile .`\
