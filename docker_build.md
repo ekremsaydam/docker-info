@@ -315,3 +315,60 @@ Dockerfile içerisinde bazı nedenlerden dolayı birden fazla FROM ifaesi kullan
 `docker image build --tag esaydam/javaappmultistage --file multistagebuild.dockerfile .`
 
 ![multi stage build](/img/docker_dockerfile_multistagebuild_p3.png)
+
+# ENV ve ARG FARKI
+
+ENV container içerisinde erişilebilecek ve docker container içerisindeki environment variable tanımlaması için kullanılır.
+
+ARG ise image oluşturulurken kullanılan değişkendir.
+[argwithout.dockerfile](/examDockerFiles/)\
+`docker image build --tag esaydam/arrgusecasewithout --file argwithout.dockerfile .`\
+[arg.dockerfile](/examDockerFiles/)\
+`docker image build --tag esaydam/arrgusecase --file arg.dockerfile .`
+
+>`docker image build --tag esaydam/arrgusecase:3.10.7 --file arg.dockerfile --build-arg VERSION=3.10.7 .`
+
+> `docker container run --rm -it esaydam/arrgusecase:3.10.7 bash` 
+![arg use case](/img/docker_dockerfile_arg_p1.png)
+
+>`docker image build --tag esaydam/arrgusecase:3.8.14 --file arg.dockerfile --build-arg VERSION=3.8.14 .`
+
+> `docker container run --rm -it esaydam/arrgusecase:3.8.14 bash`
+![arg use case](/img/docker_dockerfile_arg_p2.png)
+
+ARG bilgisi girilmediği taktirde Dockerfile içerisindeki değer geçerli olacaktır.
+
+> `docker image build --tag esaydam/arrgusecase:latest --file arg.dockerfile .`
+
+> `docker container run -it esaydam/arrgusecase:latest bash`
+![arg use case](/img/docker_dockerfile_arg_p3.png)
+
+
+# DOCKER CONTAINER COMMIT
+
+Bir container yaratılıp üzerinde işlemler yapıldıktan sonra bir image olarak kaydedilmesini sağlar.\
+`docker container run -it --name workcontainer ubuntu bash`
+
+> \# `apt-get update && apt-get upgrade -y && apt-get install wget -y`\
+> \# `mkdir temp`\
+> \# `wget https://www.python.org/ftp/python/3.7.14/Python-3.7.14.tar.xz`\
+> \# `exit`
+
+`docker container commit workcontainer workimage:latest`\
+![docker container commit](/img/docker_container_commit_p1.png)\
+\
+`docker container run -it --rm workimage`\
+![docker container commit](/img/docker_container_commit_p1.png)
+
+NOT: İstenirse `--change` parametresi kullanılarak container dan image yapılırken yeni image CMD, EXPOSE gibi özellikleride değiştirilebilir. 
+`docker container commit --change 'CMD ["java","app"]' registry esaydam/registrycmdchange:v1`\
+`docker image inspect esaydam/registrycmdchange:v1`\
+![docker container commit](/img/docker_container_commit_p3.png)
+
+
+# SAVE - LOAD - INTERNET BAĞLANTISI OLMAYAN DOCKER HOST IMAGE TASIMAK
+`docker image save workimage --output workimage.tar`\
+`docker image prune -a`\
+`docker image ls -a`\
+`docker image load --input workimage.tar`\
+`docker image ls`
