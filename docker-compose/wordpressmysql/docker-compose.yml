@@ -1,0 +1,37 @@
+version: "3.1"
+
+services:
+  wpDB:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - verilerim:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpressUser
+      - MYSQL_PASSWORD=wordpressPassword
+    networks:
+      - wpnet
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - wpDB
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: wpDB:3306
+      WORDPRESS_DB_USER: wordpressUser
+      WORDPRESS_DB_PASSWORD: wordpressPassword
+      WORDPRESS_DB_NAME: wordpress
+    networks:
+      - wpnet
+
+volumes:
+  verilerim:
+
+networks:
+  wpnet:
+    driver: bridge

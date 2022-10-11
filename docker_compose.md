@@ -1,6 +1,19 @@
 # DOCKER COMPOSE
 Büyük yapılar için web sunucuları, veritabanı utgulamaları, caching mekanizmaları, mikro servisler, back end servisleri gibi birbirine bağlı olarak çalışan birçok uygulamayı ayrı ayrı oluşturmak yerine tek seferde oluşturarak zamandan tasarruf etmek için docker compose kullanılır. Dockerfile tek bir container yaratmak ve çalıştırmak için kullanılırken docker-compose birden fazla çoklu container oluşturmamıza olanak sağlar.
 
+Birden fazla container ı yml dosyası olarak tanımlamak için kullanılıyor. Docker compose product ortamlar için uygun değildir. Daha çok development tarafı için kullanılmaktadır.\
+[YAML YML](https://yaml.org/)\
+[Compose file specification](https://docs.docker.com/compose/compose-file/)
+
+docker-compose.yml dosyasının ana bölümleri (top level):
+- version
+- services
+- volumes
+- networks
+- secrets
+- name
+- configs
+
 ## docker compose on ubuntu
 Kısa yükleme
 `sudo apt-get install docker-compose`
@@ -43,15 +56,17 @@ veya\
 
 intellicence için
 > `sudo apt-get install docker-compose`
-# docker-compose.yml dosyası Hazırlama
+# docker-compose.yaml - docker-compose.yml dosyası Hazırlama
 
+[Compose file specification](https://docs.docker.com/compose/compose-file/)\
+[The Compose Specification](https://github.com/compose-spec/compose-spec/blob/master/spec.md) *yararlanılan Ana kaynak*
 
-[The Compose Specification](https://github.com/compose-spec/compose-spec/blob/master/spec.md) *yararlanılan Ana kaynak*\
 [Compose specification](https://docs.docker.com/compose/compose-file/)\
 [compose-spec.io](https://compose-spec.io/)
 
 ## [version](https://github.com/compose-spec/compose-spec/blob/master/spec.md#version-top-level-element)
-docker compose versiyonları arasındaki barındırdıkları fonksiyonel özellikleri bakımından farklılıklar bulunmaktadır. Ancak bu özellik **kaldırılmıştır**. [Compose file](https://github.com/compose-spec/compose-spec/blob/master/spec.md#compose-file)
+docker compose versiyonları arasındaki barındırdıkları fonksiyonel özellikleri bakımından farklılıklar bulunmaktadır. Ancak bu özellik **kaldırılmıştır**. [Compose file](https://github.com/compose-spec/compose-spec/blob/master/spec.md#compose-file)\
+[Compose file versions](https://docs.docker.com/compose/compose-file/compose-versioning/)
 
 ## [services](https://github.com/compose-spec/compose-spec/blob/master/spec.md#services-top-level-element)
 container ların iskeletini oluşturan soyut bir kavramdır. image ve bir dizi çalışma zamanı argümanları ile tanımlanır. 
@@ -272,7 +287,7 @@ services:
 </pre>
 | Command        | Description |
 | -------------- | ----------- |
-| `docker compose config`<br><br>`docker compose -f nginxmariadb.docker-compose.yml config`|Olası sözdizimi hatalarını kontrol eder. <br> ![docker compose up](/img/docker_compose_p1.png)|
+| `docker compose config`<br><br>`docker compose -f nginxmariadb.docker-compose.yml config`|Olası sözdizimi hatalarını kontrol eder. Hangi sırada işlem yapacağını gösterir. Yazmış olduğumuz yml dosyasını tersten işletiyomuş gibi gösterir. <br> ![docker compose up](/img/docker_compose_p1.png)|
 | `docker compose --services` <br><br>`docker compose -f nginxmariadb.docker-compose.yml config --services` |Belirtilen docker compose dosyasındaki sadece services isimlerini görüntülemek için kullanılır.|
 | `docker compose create` <br><br>`docker compose --file nginxmariadb.docker-compose.yml create` |containerları create eder. Ancak çalıştırmaz.|
 | `docker compose down` <br><br>`docker compose --file nginxmariadb.docker-compose.yml down` |docker compose ile başlatılan services, `container` ve  `network` arayüzlerini **siler**. Ancak `volume` **silmez**. [docker compose down](https://docs.docker.com/engine/reference/commandline/compose_down/)|
