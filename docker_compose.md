@@ -135,7 +135,7 @@ tanımlanır bunun için 0.0.0.0 kullanılabilir.\
 **protocol**: udp veya tcp olarak bağlantı noktası protokolü. Belirtilmemiş ise her iki protokol anlamına gelir.
 
 ## [build](https://github.com/compose-spec/compose-spec/blob/master/build.md)
-container lar `build` ile belirtilen dizin üzerinden veya `context` ve  `dockerfile` alt parametreleri ile beraber dockerfile üzerinden de container oluşturulabilir..
+container lar `build` ile belirtilen dizin üzerinden veya `context` ve  `dockerfile` alt parametreleri ile beraber dockerfile üzerinden de container oluşturulabilir. Ayrıca Dockerfile ile hazırlanmış bir bir image içinde `docker compose build` ve `docker compose up` uygulanmalıdır.
 <pre>
 services:
   frontend:
@@ -290,7 +290,7 @@ services:
 | `docker compose config`<br><br>`docker compose -f nginxmariadb.docker-compose.yml config`|Olası sözdizimi hatalarını kontrol eder. Hangi sırada işlem yapacağını gösterir. Yazmış olduğumuz yml dosyasını tersten işletiyomuş gibi gösterir. <br> ![docker compose up](/img/docker_compose_p1.png)|
 | `docker compose --services` <br><br>`docker compose -f nginxmariadb.docker-compose.yml config --services` |Belirtilen docker compose dosyasındaki sadece services isimlerini görüntülemek için kullanılır.|
 | `docker compose create` <br><br>`docker compose --file nginxmariadb.docker-compose.yml create` |containerları create eder. Ancak çalıştırmaz.|
-| `docker compose down` <br><br>`docker compose --file nginxmariadb.docker-compose.yml down` |docker compose ile başlatılan services, `container` ve  `network` arayüzlerini **siler**. Ancak `volume` **silmez**. [docker compose down](https://docs.docker.com/engine/reference/commandline/compose_down/)|
+| `docker compose down` <br><br>`docker compose --file nginxmariadb.docker-compose.yml down` |docker compose ile başlatılan services, `container` ve  `network` arayüzlerini **siler**. **Ancak `volume` ve `image` silmez**. [docker compose down](https://docs.docker.com/engine/reference/commandline/compose_down/)|
 | `docker compose down --rmi all` <br><br>`docker compose --file nginxmariadb.docker-compose.yml down --rmi all` |docker compose ile başlatılan services, `container`, `network` ve `image` arayüzlerini **siler**. Ancak `volume` **silmez**. [docker compose down](https://docs.docker.com/engine/reference/commandline/compose_down/)|
 | `docker compose down --rmi all --volumes` <br><br>`docker compose --file nginxmariadb.docker-compose.yml down --rmi all --volumes` |docker compose ile başlatılan services, `container`, `network`, `image` ve `volume` arayüzlerini **siler**. [docker compose down](https://docs.docker.com/engine/reference/commandline/compose_down/)|
 | `docker compose events` <br><br>`docker compose --file nginxmariadb.docker-compose.yml events` |docker compose uygulamalarının anlık monitör edilmesini sağlar.. [docker compose down](https://docs.docker.com/engine/reference/commandline/compose_down/)|
@@ -370,3 +370,11 @@ docker-compose.yml dosyası içerisindeki container replikasyonunu scale paramet
 Replikasyon sayısı artırılabilindiği gibi aynı zamanda düşürülebilir.
 
 ![docker compose top](/img/docker_compose_p5.png)
+
+
+## NOT: docker-compose.yml dosyası içerisinde build: kullanılacak ise ve build Dockerfile üzerinden alınıyor ise yapılan değişikliklerinde etkili olabilmesi için `docker-compose build` ve sonrasında `docker-compose up` kullanılmalıdır. 
+
+[docker-compose.yml](/docker-compose/webmysqldockerfile/docker-compose.yml)\
+[Dockerfile](/docker-compose/webmysqldockerfile/Dockerfile)
+
+## Yukarıdaki dosyalardan yararlanılarak web klasörü içerisinde değişiklik yapıldığında image ninde bu değişiklikleri yapabilmesi için mutlaka `docker-compose build` yapılmalıdır. build yapılmadan `docker-compose up` denildiğinde sunucu çalışır ancak eski dosyalar sunucu üzerinde görüntülenir. Bunun nedeni `docker-compose down` ile image nin silinmemesidir.

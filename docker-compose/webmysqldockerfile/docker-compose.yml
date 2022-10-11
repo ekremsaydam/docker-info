@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - verilerim:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: project
+      MYSQL_ROOT_PASSWORD: projectroot
+      MYSQL_USER: projectuser
+      MYSQL_PASSWORD: projectpassword
+    networks:
+      - webnet
+
+  webserv:
+    build: .
+    depends_on:
+      - mysqldb
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - webnet
+    environment:
+      DB_SERVER: mysqldb
+      DB_USERNAME: projectuser
+      DB_PASS: projectpassword
+      DB_NAME: project
+volumes:
+  verilerim:
+
+networks:
+  webnet:
+    driver: bridge
