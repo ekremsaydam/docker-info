@@ -1,4 +1,4 @@
-# DOCKER IMAGE REGISTRY
+# [DOCKER IMAGE REGISTRY](https://docs.docker.com/registry/deploying/)
 Docker imajları varsayılan olarak [hub.docker.com](https://hub.docker.com/_/registry) bulunmakta ve buradan çekilmektedir. Ayrıca [Google Cloud Registry](https://console.cloud.google.com/gcr/images/google-containers) ve [Microsoft Artifact Registry](https://mcr.microsoft.com/en-us/) gibi online ve herkesin erişebildiği image listeleri bulunmaktadır.
 
 Docker image lerimizin başkaları tarafından erişilmesini istemiyorsak Docker Enterprise Edition ve AWS gibi sistemler kullanmalı ve belli bir ücret ödemesi yapılması gereklidir.
@@ -23,3 +23,11 @@ Yukarıdaki docker image tag komutu ile docker host üzerinde bulunan bir image 
 Yukarıdaki komut ilede local image registry mize image mizi gönderiyoruz. Tekrar http://host.docker.internal:5000/v2/_catalog adresine baktığımızda image miz repository de görüntülenecektir.
 
 ![docker registry](/img/docker_registry_p2.png)
+
+[Registry Listing Repositories](https://github.com/distribution/distribution/blob/main/docs/spec/api.md#listing-repositories)
+
+[Registry Listing Detail](https://github.com/distribution/distribution/blob/main/docs/spec/api.md#detail)
+
+    curl -X GET -u <user>:<pass> https://myregistry:5000/v2/_catalog
+    
+    curl -X GET -u <user>:<pass> https://myregistry:5000/v2/<repository_name>/tags/list

@@ -316,6 +316,9 @@ Dockerfile içerisinde bazı nedenlerden dolayı birden fazla FROM ifaesi kullan
 
 ![multi stage build](/img/docker_dockerfile_multistagebuild_p3.png)
 
+### **NOT: Multi Stage Build ilk FROM ifadesi ile baraber CMD kullanılmaz. Kullanılsada çalışmayacaktır.**
+
+
 # ENV ve ARG FARKI
 
 ENV container içerisinde erişilebilecek ve docker container içerisindeki environment variable tanımlaması için kullanılır.
