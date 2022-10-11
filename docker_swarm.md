@@ -16,6 +16,8 @@ Swarm için ayrı bir kuruluma gerek yoktur.
 Ayıca swarm üzerindeki makinelerin (node) haberleşmesi için gerekli **PORT** bulunmaktadır.
 **[Open protocols and ports between the hosts](https://docs.docker.com/engine/swarm/swarm-tutorial/#open-protocols-and-ports-between-the-hosts)**
 ![docker swarm ports](/img/docker_swarm_p1.png)
+
+![docker swarm ports](/img/swarm_diagram_p2.png)
 <hr>
 
 ## 1. Manager Node (Yönetici):
