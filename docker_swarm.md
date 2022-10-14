@@ -128,3 +128,23 @@ esaydam/phpweb image si hazırlanarak hub.docker.com üzerindeki repository ypus
 | -------------- | ----------- |
 | `curl http://web`  | docker swarm içerisinde `db` service üzerinde çalıştırılan komut. Docker swarm üzerinde Replicas olarak 3 service olduğundan her istek farklı bir service üzerinden cevaplanacak şekilde docker swarm basit bir load balancer hizmetide sunmaktadır. ![docker network balancer](/img/docker_swarm_network_load_balancer_p1.png)<br>![docker network balancer](/img/docker_swarm_network_load_balancer_p2.png)<br>![docker network balancer](/img/docker_swarm_network_load_balancer_p3.png)|
 
+
+# DOCKER UPDATE AND ROLLBACK
+[phpwebversion.dockerfile](/examDockerFiles/dockerserviceupdateroolback/phpwebversion.dockerfile)
+
+`docker image build --tag esaydam/phpweb:v1 --file phpwebversion.dockerfile --build-arg VERSION="V1" .`
+
+`docker image build --tag esaydam/phpweb:v2 --file phpwebversion.dockerfile --build-arg VERSION="V2" .`
+
+`docker image build --tag esaydam/phpweb --file phpwebversion.dockerfile .`
+
+Yukarıdaki komutlar çalıştırılıp hub.docker.com üzerindeki repositıry ye push edilmiştir.
+
+| Command        | Description |
+| -------------- | ----------- |
+|`docker network create --driver overlay overnet`|overlay network oluşturmak.|
+|`docker service create --name websrv --publish 80:80 --replicas=10 --network overnet esaydam/phpweb:v1` <br><br>`docker service ls`<br><br>`docker service ps websrv`|phpweb:v1 imagesi kullanılarak docker swarm üzerinde 10 replicas olacak şekilde overnet networküne ait service oluşturuldu. <br> ![docker service create](/img/docker_swarm_p22.png)|
+|`docker service update --help`| Update ile ilgili kullanılabilecek opsiyonları gösterir. Update işlevi Mevcut container yada service üzerinde bir değişiklik yapmaz. Yeni bir container oluşturur. İlk önce varolan containerı siler sonrasında yeni image üzerinden yeni container oluşturur. Bunuda aynı anda bütün containerları silerek değil adım adım ilk containerı siler sonrasında yenisini oluşturarak yaparve bu şekilde erişilebilirlik kesintiye uğramadan web sunucuları hizmet vermeye devam edecektir.|
+|`docker service update --update-delay 10s --update-parallelism 2 --image esaydam/phpweb:v2 websrv` <br>`docker service update --update-delay 10s --update-parallelism 2 --image esaydam/phpweb:v2 --detach websrv` <br><br>`watch docker service ps websrv`| websrv servisini aynı anda 2 container olacak şekilde 10 saniye aralıklarla image lerini update etmek için kullanılır. ![docker service update](/img/docker_swarm_p23.png) <br><br> Eğer istenirse `--detach` kullanılarak tekrar shell ekranına düşürülmesi sağlanır. İzlemek için ise `watch` komutundan yararlanılabilir.|
+|`docker service rollback  websrv`<br>`docker service rollback --detach websrv`<br><br>`watch docker service ps websrv`|Update işlemi başarısız olursa sistemi bir önceki versiyona geri yüklemek için kullanılır. <br>![docker service rollback](/img/docker_swarm_p25.png)|
+
