@@ -100,10 +100,31 @@ docker swarm declarative olarak çalışan bir uygulamadır ve herhangi bir şey
 
 * overlay network'e bağlı service leri oluşturan containerları birbirleri ile haberleşmesinde herhangi bir port kısıtlaması yoktur ve sanki aynı ağdaymuş gibi çalışırlar.
 
-* Aynı overlay network üzerinde bulunan service ler birbirlerini service isimleri ile iletişimi service name üzerinde olabilmektedir. Docker bu şekilde DNS hizmeti sunmaktadır. Ayrıca load balancing hizmetide docker tarafından yönetilir.
+* Aynı overlay network üzerinde bulunan service ler birbirlerini service isimleri (service name) üzerinde iletişim sağlarlar. Docker bu şekilde DNS hizmeti sunmaktadır. Ayrıca load balancing hizmetide docker tarafından yönetilir.
 
 * Overlay networkler üzerinde çalıştırılan serviceler için port publish yapılabilmektedir. Docker swarm overlay network üzerinde routing mesh destekler. [Use swarm mode routing mesh](https://docs.docker.com/engine/swarm/ingress/). Yani port publish edilip dışarıdaki bir kullanıcı olarak docker host üzerindeki o porta erişirseniz docker swarm modunda yaratılmış service lerin altındaki containerlar üzerine trafiği yönlendirecektir.
+* Docker swarm modu aktif edilmiş bir sistemde yeni docker swarm üzerinden yaratılan service ler herhangi bir ağ belirtilmez ise varsayılan olarak otomatik ingress adındaki ağa bağlı olarak yaratılır.
+* Her uygulama için ayrı ayrı docker swarm üzerinden overlay network yaratmak uygulamaları ayırmak için önemlidir.
+## HAZIRLIK
+[phpweb.dockerfile](/examDockerFiles/overlaynetwork/phpweb.dockerfile)
+
+`docker image build --tag esaydam/phpweb --file phpweb.dockerfile .`
+
+esaydam/phpweb image si hazırlanarak hub.docker.com üzerindeki repository ypush edilmiştir.
 
 | Command        | Description |
 | -------------- | ----------- |
 | `docker network create --driver overlay over-net`  | Bir adet overlay network oluşturmak için kullanılır. [docker swarm](https://docs.docker.com/engine/reference/commandline/swarm/)|
+| `docker service create --name web --network over-net --publish 8080:80 --replicas 3 esaydam/phpweb`  | docker manager node üzerinde komutu çalıştırarak php:8.0-apache kurulumunu docker swarm nodları üzerinde over-net isimli network e dahil olacak şekilde 3 replica olarak yarattık. [docker swarm](https://docs.docker.com/engine/reference/commandline/swarm/)|
+| `docker service ls`  | docker swarm üzerinde servislerin listesini gösterir. [docker swarm](https://docs.docker.com/engine/reference/commandline/swarm/)|
+| `docker service ps web`  | Belirtilen service (web) için çalıştırılan görevleri(task) listeler.) [docker swarm](https://docs.docker.com/engine/reference/commandline/swarm/) <br> ![docker service ps](/img/docker_swarm_p15.png) <br> Resimde görüldüğü gibi manager1 üzerinde herhangi bir docker container çalışmamasına rağmen manager1 ip adresi üzerinden 80 portuna erişmek istediğimizde de docker swarm ın yönettiği manager1 üzerinde bir service olmamasına rağmen yinede web sitesi görüntülenecektir. Bu duruma swarm routing mesh denilmektedir.  [Use swarm mode routing mesh](https://docs.docker.com/engine/swarm/ingress/)|
+| `docker service create --name db --network over-net -e MYSQL_ROOT_PASSWORD=my-secret-pw mysql:8.0.31-debian`  | mysql imajından yararlanılarak db isminde ve over-net networküne dahil edilecek şekilde docker swarm üzerinde 1 replicas olacak şekilde bir service oluşturulması için kullanılır.|
+| `docker service inspect web` (yada)<br> `docker service inspect --format '{{json .Endpoint.VirtualIPs}}' web \| jq` <br><br> `docker service inspect db` (yada) <br> `docker service inspect --format '{{json .Endpoint.VirtualIPs}}' db \| jq` | VIP ip adresi kullanımı kontrol edilmesi. ![Docker swarm](/img/docker_swarm_p17.png)|
+| `docker service ls` <br><br> `docker service ps db` <br><br> `docker container ls` <br><br> `docker container exec -it 5c522ce6d056 bash` <br><br> `apt-get update && apt-get install -y iputils-ping dnsutils net-tools curl `<br><br>`ping web` <br><br> `dig web` <br><br>`nslookup web`<br><br>`wget -O- web\|more` | Aynı overlay network içerisindeki service lerin birbirleri arasındaki iletişim isim üzerinden yapılabilir. Yandaki komutların hepsi `db` service üzerinden çalıştırılmıştır. ![docker swarm](/img/docker_swarm_p16.png)<br>![docker swarm](/img/docker_swarm_p18.png)<br>![docker swarm](/img/docker_swarm_p19.png)<br>![docker swarm](/img/docker_swarm_p20.png)<br>![docker swarm](/img/docker_swarm_p21.png)|
+
+
+# DOCKER NETWORK LOAD BALANCER
+| Command        | Description |
+| -------------- | ----------- |
+| `curl http://web`  | docker swarm içerisinde `db` service üzerinde çalıştırılan komut. Docker swarm üzerinde Replicas olarak 3 service olduğundan her istek farklı bir service üzerinden cevaplanacak şekilde docker swarm basit bir load balancer hizmetide sunmaktadır. ![docker network balancer](/img/docker_swarm_network_load_balancer_p1.png)<br>![docker network balancer](/img/docker_swarm_network_load_balancer_p2.png)<br>![docker network balancer](/img/docker_swarm_network_load_balancer_p3.png)|
+
