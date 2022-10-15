@@ -1,0 +1,13 @@
+# [DOCKER STACK](https://docs.docker.com/engine/reference/commandline/stack/)
+docker engine modda iken kullanılan docker compose dosyasını docker swarm modda iken kullanılmasını sağlar. docker-compose.yml veya docker-compose.yaml dosyasında kullanılan bazı özellikler artık kullanılamayabilir. Örneğin mount binding yöntemi ile docker host üzerindeki bir klasörün kullanılamaması veya network oluşturulurken bridge netwrok üzerinden hareketle bir container oluşturulması gibi özellikler sistemin doğası olarak çalıştırılamayacaktır. Ayrıca Dockerfile build işlemide yapılamayacaktır.
+
+| Command        | Description |
+| -------------- | ----------- |
+|`docker stack deploy --compose-file docker-compose.yml ilkstacksrv`|docker-compoe.yml üzerinden docker swarm moddaki üye node ler üzerinde yml dosyası içerisindeki service leri oluşturur. [docker stack deploy](https://docs.docker.com/engine/reference/commandline/stack_deploy/)|
+|`docker stack ls`|stack kullanılarak oluşturulmuş stackleri listeler. [docker stack ls](https://docs.docker.com/engine/reference/commandline/stack_ls/)<br> ![docker stack](/img/docker_stack_p1.png)|
+|`docker stack ps ilkstacksrv`|stack kullanılarak oluşturulmuş belirtilen stack içerisinde kaç tane service oluştuğunu hangi node üzerinde çalıştırıldığını gösterir. [docker stack ps](https://docs.docker.com/engine/reference/commandline/stack_ps/)<br> ![docker stack](/img/docker_stack_p2.png)|
+|`docker stack services ilkstack`|stack kullanılarak oluşturulmuş belirtilen stack içerisinde kaç tane service listesini gösterir. [docker stack services](https://docs.docker.com/engine/reference/commandline/stack_services/)<br>![docker stack](/img/docker_stack_p3.png)|
+|`docker service ls`| service listesini gösterir.|
+|`docker service ps ilkstack_webserv`| belirtilen service detaylarını gösterir. ![docker service ps](/img/docker_stack_p4.png)|
+|`docker service inspect ilkstack_webserv`| belirtilen service ile ilgili JSON olarak detaylı bilgi verir.|
+|`docker stack rm ilkstack`| belirtilen stacki siler. [docker stack rm](https://docs.docker.com/engine/reference/commandline/stack_rm/)<br>![docker stack rm](/img/docker_stack_p5.png)|

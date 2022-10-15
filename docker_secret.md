@@ -7,7 +7,7 @@
 | Command        | Description |
 | -------------- | ----------- |
 |`docker swarm init`| Docker swarm aktif hal getirilmesi için kullanılır. |
-|`docker secret create kullanici_adi kullaniciadi.txt`| kullanıcı.txt içerisindeki verinin kullanici_adi secret değişkeni içerisine aktarilması sağlanmış oldu. [docker secret create](https://docs.docker.com/engine/reference/commandline/secret_create/)|
+|`docker secret create kullanici_adi kullaniciadi.txt`| [kullanıcı.txt](/examDockerFiles/dockersecret/kullaniciadi.txt) içerisindeki verinin kullanici_adi secret değişkeni içerisine aktarilması sağlanmış oldu. [docker secret create](https://docs.docker.com/engine/reference/commandline/secret_create/)|
 |`docker secret create sifre sifre.txt`| sifre.txt içerisindeki verinin sifre değişkeni içerisine aktarilması sağlanmış oldu.[docker secret create](https://docs.docker.com/engine/reference/commandline/secret_create/)|
 |`docker secret ls`| yaratılan secret değişkenlerinin listelenmesi için kullanılır. [docker secret ls](https://docs.docker.com/engine/reference/commandline/secret_ls/)<br>![docker secret ls](/img/docker_secret_p1.png)|
 |`docker secret inspect kullanici_adi`<br><br>`docker secret inspect sifre`| belirtilen secret anahtarına ait detaylı bilgileri gösterir. [docker secret inspect](https://docs.docker.com/engine/reference/commandline/secret_inspect/) <br><br> ![docker secret inspect](/img/docker_secret_p1.png)|
