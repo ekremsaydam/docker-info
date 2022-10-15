@@ -1,37 +1,82 @@
-version: "3.1"
+version: "3.8"
 
 services:
-  wpDB:
-    image: mysql:5.7
-    restart: always
+  wpdb:
+    image: mysql:debian
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500MB
     volumes:
-      - verilerim:/var/lib/mysql
+      - wpdbvol:/var/lib/mysql
+    secrets:
+      - db_root_password
+      - wp_user_pass
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpass
-      - MYSQL_DATABASE=wordpress
-      - MYSQL_USER=wordpressUser
-      - MYSQL_PASSWORD=wordpressPassword
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD_FILE: /run/secrets/wp_user_pass
+      MYSQL_DATABASE: wordpress
+    networks:
+      - wpnet
+  
+  phpmyadmin:
+    depends_on:
+      - wpdb
+    image: phpmyadmin:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 100MB
+    environment:
+      PMA_HOST: wpdb
+    ports:
+      - "8080:80"
     networks:
       - wpnet
 
-  wordpress:
+  wpapp:
     image: wordpress:latest
-    depends_on:
-      - wpDB
-    restart: always
+    secrets:
+      - wp_user_pass
+    environment:
+      WORDPRESS_DB_HOST: wpdb:3306
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wp_user_pass
+      WORDPRESS_DB_NAME: wordpress
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 100MB
+      replicas: 3
+      update_config:
+        parallelism: 2
+        delay: 10s
+        order: stop-first
     ports:
       - "80:80"
-    environment:
-      WORDPRESS_DB_HOST: wpDB:3306
-      WORDPRESS_DB_USER: wordpressUser
-      WORDPRESS_DB_PASSWORD: wordpressPassword
-      WORDPRESS_DB_NAME: wordpress
+    depends_on:
+      - wpdb
+      - phpmyadmin
+    volumes:
+      - wpappvol:/var/www/html
     networks:
       - wpnet
-
-volumes:
-  verilerim:
-
 networks:
   wpnet:
-    driver: bridge
+    driver: overlay
+volumes:
+  wpdbvol:
+  wpappvol:
+secrets:
+  db_root_password:
+    external: true
+  wp_user_pass:
+    external: true
+# Şifre yaratmak için aşağıdaki komut kullanılır.
+## cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 | docker secret create db_root_password -
+## cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 | docker secret create wp_user_pass -
+

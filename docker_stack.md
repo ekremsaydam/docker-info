@@ -1,5 +1,6 @@
 # [DOCKER STACK](https://docs.docker.com/engine/reference/commandline/stack/)
 docker engine modda iken kullanılan docker compose dosyasını docker swarm modda iken kullanılmasını sağlar. docker-compose.yml veya docker-compose.yaml dosyasında kullanılan bazı özellikler artık kullanılamayabilir. Örneğin mount binding yöntemi ile docker host üzerindeki bir klasörün kullanılamaması veya network oluşturulurken bridge netwrok üzerinden hareketle bir container oluşturulması gibi özellikler sistemin doğası olarak çalıştırılamayacaktır. Ayrıca Dockerfile build işlemide yapılamayacaktır.
+[Compose file version 3 reference](https://docs.docker.com/compose/compose-file/compose-file-v3/)
 
 | Command        | Description |
 | -------------- | ----------- |
@@ -20,7 +21,7 @@ docker engine modda iken kullanılan docker compose dosyasını docker swarm mod
 
     cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 | docker secret create wp_user_pass -`
 
-    
+
 `docker stack deploy --compose-file docker-compose.yml wpstack`\
 `docker stack ls`\
 `docker stack ps wpstack`\
