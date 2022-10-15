@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  wpdb:
+    image: mysql:debian
+    volumes:
+      - wpdbvol:/var/lib/mysql
+    secrets:
+      - db_root_password
+      - wp_user_pass
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD_FILE: /run/secrets/wp_user_pass
+      MYSQL_DATABASE: wordpress
+    networks:
+      - wpnet
+  
+  phpmyadmin:
+    depends_on:
+      - wpdb
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: wpdb
+    ports:
+      - "8080:80"
+    networks:
+      - wpnet
+
+  wpapp:
+    image: wordpress:latest
+    secrets:
+      - wp_user_pass
+    environment:
+      WORDPRESS_DB_HOST: wpdb:3306
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/wp_user_pass
+      WORDPRESS_DB_NAME: wordpress
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+        delay: 10s
+        order: stop-first
+    ports:
+      - "80:80"
+    depends_on:
+      - wpdb
+      - phpmyadmin
+    volumes:
+      - wpappvol:/var/www/html
+    networks:
+      - wpnet
+networks:
+  wpnet:
+    driver: overlay
+volumes:
+  wpdbvol:
+  wpappvol:
+secrets:
+  db_root_password:
+    external: true
+  wp_user_pass:
+    external: true
+# Şifre yaratmak için aşağıdaki komut kullanılır.
+## cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 | docker secret create db_root_password -
+## cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 | docker secret create wp_user_pass -
+

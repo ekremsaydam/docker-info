@@ -11,3 +11,20 @@ docker engine modda iken kullanılan docker compose dosyasını docker swarm mod
 |`docker service ps ilkstack_webserv`| belirtilen service detaylarını gösterir. ![docker service ps](/img/docker_stack_p4.png)|
 |`docker service inspect ilkstack_webserv`| belirtilen service ile ilgili JSON olarak detaylı bilgi verir.|
 |`docker stack rm ilkstack`| belirtilen stacki siler. [docker stack rm](https://docs.docker.com/engine/reference/commandline/stack_rm/)<br>![docker stack rm](/img/docker_stack_p5.png)|
+
+
+# ORNEK UYGULAMA
+[docker stack build docker-compose.yml](/docker-compose/wordpressmysql/stackfile/docker-compose.yml)
+
+    cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 | docker secret create db_root_password -
+
+    cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 | docker secret create wp_user_pass -`
+
+    
+`docker stack deploy --compose-file docker-compose.yml wpstack`\
+`docker stack ls`\
+`docker stack ps wpstack`\
+`docker container ls`\
+`docker container exec -ti 191f61ecf2fd bash`\
+`cat /run/secrets/db_root_password`\
+`cat /run/secrets/wp_user_pass`
