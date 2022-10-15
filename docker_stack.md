@@ -3,7 +3,7 @@ docker engine modda iken kullanılan docker compose dosyasını docker swarm mod
 
 | Command        | Description |
 | -------------- | ----------- |
-|`docker stack deploy --compose-file docker-compose.yml ilkstacksrv`|docker-compoe.yml üzerinden docker swarm moddaki üye node ler üzerinde yml dosyası içerisindeki service leri oluşturur. [docker stack deploy](https://docs.docker.com/engine/reference/commandline/stack_deploy/)|
+|`docker stack deploy --compose-file docker-compose.yml ilkstacksrv`|[docker-compoe.yml](/docker-compose/dockerstack/docker-compose.yml) üzerinden docker swarm moddaki üye node ler üzerinde yml dosyası içerisindeki service leri oluşturur. [docker stack deploy](https://docs.docker.com/engine/reference/commandline/stack_deploy/)|
 |`docker stack ls`|stack kullanılarak oluşturulmuş stackleri listeler. [docker stack ls](https://docs.docker.com/engine/reference/commandline/stack_ls/)<br> ![docker stack](/img/docker_stack_p1.png)|
 |`docker stack ps ilkstacksrv`|stack kullanılarak oluşturulmuş belirtilen stack içerisinde kaç tane service oluştuğunu hangi node üzerinde çalıştırıldığını gösterir. [docker stack ps](https://docs.docker.com/engine/reference/commandline/stack_ps/)<br> ![docker stack](/img/docker_stack_p2.png)|
 |`docker stack services ilkstack`|stack kullanılarak oluşturulmuş belirtilen stack içerisinde kaç tane service listesini gösterir. [docker stack services](https://docs.docker.com/engine/reference/commandline/stack_services/)<br>![docker stack](/img/docker_stack_p3.png)|
