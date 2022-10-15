@@ -1,4 +1,5 @@
 # [DOCKER SECRET](https://docs.docker.com/engine/reference/commandline/secret/)
+[Manage sensitive data with Docker secrets](https://docs.docker.com/engine/swarm/secrets/)
 - Docker secret swarm modu aktifken kullanılabilir bir özelliktir. 
 - Dockerfile yada docker-compose.yml dosyası içerisinde yazmış olduğumuz şifreleri clear text(plaint text) olarak bırakmak yerine şifreleyerek bertilen container lar tarafından kullanılması sağlanabilir. Böylelikle güvenlik sağlanmış olur.
 - image içerisinede şifre gömmülmesi ve o şekilde kullanılması da şifreler için güvenli değildir.
