@@ -61,7 +61,12 @@ Docker Container tanıtım videosu
 Docker kurulumuna sahip değilseniz aşağıdaki linkten docker üzerinde çalışabilirsiniz.
 [play-with-docker](https://labs.play-with-docker.com/)
 
+![](/img/docker_stack_p0.png)
+
+## NOT: Yukarıdaki gibi bir hata ile karşılaşmak istemiyorsanız docker kurulumunu mutlaka `sudo su` ile root kullanıcısına geçtiktan sonra kurulum komutlarını uygulayın.
+
 1. Eski sürümü kaldırmak için kullanılır.\
+`sudo su`\
 `sudo apt-get remove docker docker-engine docker.io containerd runc`
 
 2. Apt paketlerini güncelleyiniz.\    

@@ -1,5 +1,12 @@
 # [DOCKER STACK](https://docs.docker.com/engine/reference/commandline/stack/)
+`docker service`  komutu swarm cluster altında yeni **tek bir container** oluşturmamıza ve bu container a yönelik işlemleri gerçekleştirmemizi sağlar. 
+
+Ancak birden fazla service oluşturup docker swarm ın bu serviceleri yönetmek istiyorsak `docker stack` deyiminden yararlanıyoruz. 
+
 docker engine modda iken kullanılan docker compose dosyasını docker swarm modda iken kullanılmasını sağlar. docker-compose.yml veya docker-compose.yaml dosyasında kullanılan bazı özellikler artık kullanılamayabilir. Örneğin mount binding yöntemi ile docker host üzerindeki bir klasörün kullanılamaması veya network oluşturulurken bridge netwrok üzerinden hareketle bir container oluşturulması gibi özellikler sistemin doğası olarak çalıştırılamayacaktır. Ayrıca Dockerfile build işlemide yapılamayacaktır.
+
+Ek olarak docker-compose.yml dosyası içerisinde deploy parametresi ile birleşenler özelleştirilebilir.
+
 [Compose file version 3 reference](https://docs.docker.com/compose/compose-file/compose-file-v3/)
 
 | Command        | Description |
