@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - verilerim:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpressUser
+      - MYSQL_PASSWORD=wordpressPassword
+    networks:
+      - webnet
+
+  webserv:
+    image: esaydam/phpweb
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - "node.role == manager"
+      update_config:
+        parallelism: 2
+        delay: 10s
+        order: stop-first
+    depends_on:
+      - mysqldb
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+    environment:
+      DB_SERVER: mysqldb
+      DB_USERNAME: projectuser
+      DB_PASS: projectpassword
+      DB_NAME: project
+volumes:
+  verilerim:
+
+networks:
+  webnet:
+    driver: overlay
