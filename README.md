@@ -85,7 +85,7 @@ sudo apt-get install \
 `sudo mkdir -p /etc/apt/keyrings` <br><br>
 `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg`
 
-5. En son kararlı sürümü apt-get ile kurabilme için kullanılmalıdır.\
+5. En son kararlı sürümü apt-get ile kurabilme için kullanabilmek için yazılım deposunu apt-get listesine eklemiş olduk.\
 <pre>
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
@@ -115,7 +115,7 @@ NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sür�
 12. Belirli bir kullanıcı ile docker çalıştırma için config yükleme\
 `dockerd-rootless-setuptool.sh install`
 
-13. Güvenlik açısından root kullanıcısı yerine farklı bir kullanıcı ile docker kullanılması tercih edilmelidir.\
+13. Güvenlik açısından root kullanıcısı yerine farklı bir kullanıcı ile docker kullanılması tercih edilmelidir. $USER ifadesi istenilen username ile değiştirilebilir. \
 `sudo usermod -aG docker $USER`
 
 14. docker servisi yeniden başlatılır.\
@@ -163,7 +163,7 @@ Docker linux yerel imaj deposu:
 | `docker version`  | Docker Engine yüklü bilgisayarın hangi versiyon ve hangi işletim sistemi üzerine konumlandığı bilgileri gösterilir.. [docker version](https://docs.docker.com/engine/reference/commandline/version/)|
 | `docker info`  | Docker kurulumu ile ilgili sistem genelindeki bilgileri gösterir. [docker info](https://docs.docker.com/engine/reference/commandline/info/)|
 | `docker images`  | Yüklü imajları listelemek için kullanılır [docker images](https://docs.docker.com/engine/reference/commandline/images/) |
-| `docker image ls`   | Yüklü imajları listelemek için kullanılır.<br> **REPOSITORY:** hangi repodan çekildiği bilgisini gösterir. TAG: imajın versiyonunun gösterir. <br>**IMAGE ID:** her docker için farklı bir kimlik olup 64 karakterden oluşur. İlk 12 karakteri gösterilir. İmajın 12 karakterlik kısmı kullanılarakda işlem yapılabilir. <br>**CREATED:** imajın oluşturulduğu tarihi gösterir.<br>**SIZE:**imajın bıyutunu gösterir. NOT: ID numaraları ile işlem yaparken hızdan tasarruf etmek adına kimlik numarasının benzersiz olan ilk karakterleri kullanılarak da imaj üzerinde işlemyapılabilir. [docker image](https://docs.docker.com/engine/reference/commandline/image/) \|[docker image ls](https://docs.docker.com/engine/reference/commandline/image_ls/)|
+| `docker image ls`   | Yüklü imajları listelemek için kullanılır.<br> **REPOSITORY:** hangi repodan çekildiği bilgisini gösterir. <br>**TAG**: imajın versiyonunun gösterir. <br>**IMAGE ID:** her docker için farklı bir kimlik olup 64 karakterden oluşur. İlk 12 karakteri gösterilir. İmajın 12 karakterlik kısmı kullanılarak da işlem yapılabilir. <br>**CREATED:** imajın oluşturulduğu tarihi gösterir.<br> **SIZE:** imajın toplam boyutunu gösterir. <br><br> NOT: ID numaraları ile işlem yaparken hızdan tasarruf etmek adına kimlik numarasının benzersiz olan ilk karakterleri kullanılarak da imaj üzerinde işlem yapılabilir. [docker image](https://docs.docker.com/engine/reference/commandline/image/) \|[docker image ls](https://docs.docker.com/engine/reference/commandline/image_ls/)|
 | `docker image ls -q` | Yüklü imajların ID numaralarını listelemek için kullanılır. |
 | `docker image pull <<image_name>>`  | Docker Hub üzerinde yer alan imajı yerel sisteme çekmek için kullanılır. [docker image pull](https://docs.docker.com/engine/reference/commandline/image_pull/)|
 | `docker images \| grep -A2 postgres`  | postgress imajından önce yüklenmiş son 2 image yi gösterir. Toplamda 3 image gösterecektir. |
@@ -277,6 +277,10 @@ https://docs.docker.com/config/containers/resource_constraints/
 | `docker container run --memory 100MB --memory-swap 200MB -d nginx` | 100MB doldurulsa dahi swap alanından dolayı 200MB daha sistemden kullanabilecek. [docker container run](https://docs.docker.com/engine/reference/commandline/container_run/)|
 | **`docker container update --cpu-shares 500 c_busybox`** | varolan ve çalışan bir container kaynağının güncelleştirilmesi. [docker container update](https://docs.docker.com/engine/reference/commandline/container_update/)  ![docker container rm](/img/docker_container_p13.png)|
 # ORNEKLER
+[cowsay Dockerfile](/examDockerFiles/cowsay/Dockerfile) \
+`docker image build --tag cowsaycontainer:latest .` \
+`docker container run --rm cowsaycontainer /usr/games/cowsay -f 'turtle' 'Docker'`
+<hr>
 
 `docker container run --memory 100MB -d nginx`\
 `docker stats`
