@@ -1,0 +1,18 @@
+#include <tunables/global>
+
+profile docker-apparmor flags=(attach_disconnected,mediate_deleted) {
+    #include <abstractions/base>
+
+    network inet tcp,
+    network inet udp,
+    network inet icmp,
+
+    deny network raw,
+    deny network packet,
+    file,
+    mount,
+
+    deny /bin/** wl,
+    deny /home/** wl,
+
+}
