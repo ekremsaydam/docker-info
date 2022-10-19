@@ -1,13 +1,42 @@
 # DOCKERFILE 
 [dockerfile](https://docs.docker.com/engine/reference/builder/) \
-İmajlar **dockerfile** adı verilen özel yapılar ile oluşturulur. Dockerfile Docker'a özgü bir betik dosyasıdır. imagenin tanımlamalarının yapıldığı dosyadır. 
+İmajlar **dockerfile** adı verilen özel yapılar ile oluşturulur. Dockerfile Docker'a özgü bir betik dosyasıdır. imagenin tanımlamalarının yapıldığı dosyadır. Her satırda belli bir direktif (instruction) bulunmaktadır. Her direktif de image nin bir katmanını oluşturur. Her direktif kendisinden önceki katman üzerinde çalışır ve değişiklikler yeni bir katmanda tutulur. Kısacası kaç satırınız var ise o kadar katmanınız vardır diyebiliriz.
+
 `docker build` kullanılarak dockerfile içerisindeki talimatları yürüterek bir imaj oluşturur. [docker build](https://docs.docker.com/engine/reference/commandline/build/) | [docker image build](https://docs.docker.com/engine/reference/commandline/image_build/)
 
 Sözdizimi \
 `docker build [OPTIONS] PATH | URL | -`
 
+`docker build` çalıştırıldığında Dockerfile'ın bulunduğu klasör (path - yol) içerisindeki dosyalar Docker Daemon aracılığı ile image dönüştürülür. Bu path içerisindeki dosyalar ve alt klasörlerin tamamına `context` denilmektedir.
+
+[Dockerfile](/examDockerFiles/contextsample/Dockerfile)
+image oluşturulmak istendiğinde context Docker üzerine aktarılır.
+![](/img/dockerfile_p01.png)
+
+.dockerignore dosyası kullanılarak context içerisindeki dosyaların Docker Daemon a iletilmesinin önüne geçilmiş olur. Dosyalarımızı proje içerisinde tutup context boyutunu bu şekilde artırılmamasını sağlıyoruz.
+
+![](/img/dockerfile_p02.png)
+
+Kritik bilgilerin tutulduğu dosyalaro, test aşamasında üretilmiş log dosyalarını, verileri, prola dosyalarını context dışında tutarak işlem yapılmasını `.dockerignore` dosyası ile sağlamış oluyoruz.
+
+Ayrıca github üzerinde bulunan bir Dockerfile üzerinde de build alınarak bir image oluşturulabilir. \
+`docker build -t gitrepoimage https://raw.githubusercontent.com/ekremsaydam/docker-info/master/examDockerFiles/cowsay/Dockerfile`
+## NOT: Güvenlik açısından projelerinizin github repolarında Dockerfile bulundurulmaması önerilmektedir.
+
+Yorum satırları için satır başına # ifadesi kullanılır.
+
 ## [FROM](https://docs.docker.com/engine/reference/builder/#from)
-Hangi imajın temel olarak kabul edileceğini gösterir. TAG yazılırken : kullanılır. Eğer kullanılmaz ise latest kabul edilir. Tek bir dockerfile içerisinde birden fazla FROM kullanılabilir.
+Hangi imajın temel olarak kabul edileceğini gösterir. Bu noktada en temel imajın ne olduğu konusu ortaya çıkıyor. Dockerfile içerisinde FROM ifadesi yer almayan yada `FROM scratch` image lere base image denilmektedir.
+
+scratch image docker içerisinde var olan boş image ye verilen isimdir. En temelde bu image yi baz alarak kendi imagelerimizi oluşturabiliriz.
+
+Docker file içerisinde `FROM scratch` ifadesini yazsak bile `docker pull` ile kendi sistemimize çekmemiz veya `docker container run` ile çalıştırmamız olanaklı olmamaktadır.
+
+![](/img/docker_image_base_p1.png)
+
+FROM ile beraber kullanılan image lere parent image (ebeveyn) denilmektedir.
+
+TAG yazılırken : kullanılır. Eğer kullanılmaz ise latest kabul edilir. Tek bir dockerfile içerisinde birden fazla FROM kullanılabilir. 
 
 ### [ARG](https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact)
 ARG ve FROM nasıl etkileşim içerisindedir. ARG FROM ifadesinin önüne gelerek bir değişten içerisine değer atama işlemini sağlar ve sonrasında FROM satırında değişken kullanımı sağlanmış olur.

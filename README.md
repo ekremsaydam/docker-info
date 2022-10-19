@@ -153,9 +153,11 @@ https://hub.docker.com/publishers/microsoftowner \
 https://mcr.microsoft.com/en-us/ \
 https://console.cloud.google.com/gcr/images/google-containers 
 <br><br>
-Popüler olarak kullanılan birçok uygulamanın resmi imajları kendi üreticisi tarafından [Docker Hub](https://hub.docker.com/search?q=) üzerinde yayınlanmaktadır.
 
-Docker linux yerel imaj deposu:
+Bir yazılımın çalışması için gerekli tüm dosyaları, kodları, kütüphaneleri içeren paketlere`image` diyoruz.
+
+
+Popüler olarak kullanılan birçok uygulamanın resmi imajları kendi üreticisi tarafından [Docker Hub](https://hub.docker.com/search?q=) üzerinde yayınlanmaktadır.
 
 
 | Command        | Description |
