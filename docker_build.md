@@ -38,14 +38,13 @@ FROM ile beraber kullanılan image lere parent image (ebeveyn) denilmektedir.
 
 TAG yazılırken : kullanılır. Eğer kullanılmaz ise latest kabul edilir. Tek bir dockerfile içerisinde birden fazla FROM kullanılabilir. 
 
-### [ARG](https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact)
-ARG ve FROM nasıl etkileşim içerisindedir. ARG FROM ifadesinin önüne gelerek bir değişten içerisine değer atama işlemini sağlar ve sonrasında FROM satırında değişken kullanımı sağlanmış olur.
-
 ## [RUN](https://docs.docker.com/engine/reference/builder/#run)
-**imajların oluşumu** sırasında belirtilen komutları çaıştırır.
+
+**imajların oluşumu** sırasında bir önceki katman üzerinde çalıştırılacak komutları yazmak için kullanılır.
+
 İki farklı formu vardır.
-1. `RUN <command>`
-2. `RUN ["executable", "param1", "param2"]`
+1. SHELL FORMATI : `RUN <command>`
+2. EXEC FORMATI : `RUN ["executable", "param1", "param2"]`
 
 İlk formu kullanılacak ise escape `\` karakteri kullanılarak birden fazla satır komut çalıştırılabilir.
 
@@ -55,17 +54,20 @@ ARG ve FROM nasıl etkileşim içerisindedir. ARG FROM ifadesinin önüne gelere
 
 **NOT**: *ikinci formun kullanıldığı noktalarda çift tırnak içerisinde `\` kullanılacak ise `\\` olarak kullanılması gerekmektedir.*
 
+
 ## [CMD](https://docs.docker.com/engine/reference/builder/#cmd)
+Bir container oluşturulmak istendiğinde `docker container run ubuntu calistirilacak_komut` kullanılarak `calistirilacak_komut` ifadesi ile herhangi bir komut belirtilmediği taktirde varsayılan olarak container başlatıldığında işletilmesini istediğimiz komutun belirlenmesi için kullanılır.
+
+`docker run` komutu kullanılarak çalışması istenilen komut belirtilirse CMD satırı görmezden gelinir. Bu durumda Dockerfile içerisindeki CMD direktifi yok sayılır.
+
 CMD dockerfile içerisinde sadece 1 kez kullanılabilir. Birden fazla kullanımlarda sadece son kullanılan CMD satırı çalışacaktır.
 
-Bir **konteynerin çalışması sırasında** başlangıç davranışını belirler. 
+CMD bir **konteynerin çalışması sırasında** başlangıç davranışını belirler. 
 
 Üç formu vardır.
 1. `CMD ["executable","param1","param2"]`
-2. `CMD ["param1","param2"]`
-3. `CMD command param1 param2`
-
-docker run komutu ile argüman kullanılırsa CMD ile oluşturulmuş parametrelerin yerine geçer. Bu durumda Dockerfile içerisindeki CMD direktifi yok sayılır.
+2. `CMD command param1 param2`
+3. `CMD ["param1","param2"]`
 
 >[fromrunaddcmd.dockerfile](examDockerFiles\fromrunaddcmd.dockerfile)\
 `FROM centos`\
@@ -76,6 +78,17 @@ docker run komutu ile argüman kullanılırsa CMD ile oluşturulmuş parametrele
 
 `docker build -t myfirstimage -f fromrunaddcmd.dockerfile .`
 ![docker build](/img/docker_build_p5.png)
+
+Farklı bir örrnek Dockerfile içeriği:
+
+    FROM alpine
+    RUN apk add --no-cache python3
+    CMD python3 -m http.server 9000
+`docker image build --tag pyweb:v3 .` \
+`docker container run --rm --name pyweb -p 9000:9000 -d esaydam/pyweb:v3` \
+
+### [ARG](https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact)
+ARG ve FROM nasıl etkileşim içerisindedir. ARG FROM ifadesinin önüne gelerek bir değişten içerisine değer atama işlemini sağlar ve sonrasında FROM satırında değişken kullanımı sağlanmış olur.
 
 ## [ADD](https://docs.docker.com/engine/reference/builder/#add)
 İki formu vardır.
