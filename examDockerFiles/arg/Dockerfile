@@ -1,0 +1,5 @@
+ARG PYTHON_VERSION="3"
+FROM python:${PYTHON_VERSION}
+ARG CYTHON_VERSION="3.0.0a11"
+RUN pip install Cython==${CYTHON_VERSION}
+CMD cython -V && python -V

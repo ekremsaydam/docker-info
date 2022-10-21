@@ -9,8 +9,9 @@ Sözdizimi \
 
 `docker build` çalıştırıldığında Dockerfile'ın bulunduğu klasör (path - yol) içerisindeki dosyalar Docker Daemon aracılığı ile image dönüştürülür. Bu path içerisindeki dosyalar ve alt klasörlerin tamamına `context` denilmektedir.
 
-[Dockerfile](/examDockerFiles/contextsample/Dockerfile)
-image oluşturulmak istendiğinde context Docker üzerine aktarılır.
+[Dockerfile](/examDockerFiles/contextsample/Dockerfile) \
+image oluşturulmak istendiğinde context Docker üzerine aktarılır.\
+`dd if=/dev/zero of=bosdosya bs=10M count=1`
 ![](/img/dockerfile_p01.png)
 
 .dockerignore dosyası kullanılarak context içerisindeki dosyaların Docker Daemon a iletilmesinin önüne geçilmiş olur. Dosyalarımızı proje içerisinde tutup context boyutunu bu şekilde artırılmamasını sağlıyoruz.
@@ -90,19 +91,35 @@ Farklı bir örrnek Dockerfile içeriği:
 ### [ARG](https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact)
 ARG ve FROM nasıl etkileşim içerisindedir. ARG FROM ifadesinin önüne gelerek bir değişten içerisine değer atama işlemini sağlar ve sonrasında FROM satırında değişken kullanımı sağlanmış olur.
 
+`docker image build --tag pythoncustom:v2 .` \
+`docker container run --rm pythoncustom:v2` \
+
+
+`docker image build --tag pythoncustom:v3 --build-arg PYTHON_VERSION="3" --build-arg CYTHON_VERSION="3.0.0a11" .` \
+`docker container run --rm pythoncustom:v3` \
+
+![docker container run](/img/dockerfile_p04.png)
+
 ## [ADD](https://docs.docker.com/engine/reference/builder/#add)
+Container içerisine dosya kopyalamak için kullanılır. 
 İki formu vardır.
 1. `ADD [--chown=<user>:<group>] <src>... <dest>`
 2. `ADD [--chown=<user>:<group>] ["<src>",... "<dest>"]`
 
 `--chown=` parametresi sadece linux kullanıcıları için geçerlidir.
 
-`src` olarak belirtilen dosyayı image içerisine `dest` olarak belirtilen pathe kopyalar.
+`src` olarak belirtilen dosyayı image içerisine `dest` olarak belirtilen path e kopyalar.
 
 **NOT**:*`ADD` komutunun `COPY` komutundan farklı tar dosyaları ve URL üzerinden de işlem yapabilmesidir."*
 
+Eğer kopyalanacak dosya tar ise container içerisinde tar dosyası açılarak atılır. Ancak URL üzerinden tar dosyası alınacak ise o zaman açma işlemini yerine getirmez. \
+[Dockerfile](/examDockerFiles/add/Dockerfile)\
+`docker image build --tag pyapp:v3 .`\
+`docker container run --rm pyapp:v3`
+![Dockerfile](/img/dockerfile_p03.png)
+
 ## [COPY](https://docs.docker.com/engine/reference/builder/#copy)
-Docker'ın çalıştığı kaynak makineden oluşturulan image içerisine dosya ve klasör kopyalamayı sağlar.\
+Docker'ın çalıştığı kaynak makineden oluşturulan image içerisine dosya ve klasör kopyalamayı sağlar. \
 Kullanım formu iki tanedir: 
 1. `COPY [--chown=<user>:<group>] <src>... <dest>`
 2. `COPY [--chown=<user>:<group>] ["<src>",... "<dest>"]`
@@ -115,9 +132,17 @@ Kullanım formu iki tanedir:
 ![docker build](/img/docker_build_p6.png)
 
 ## [LABEL](https://docs.docker.com/engine/reference/builder/#label)
+oluşturulan image için belirtmek istediğimiz etiketler, tanımlamalar eklemek için kullanılır. `docker image inspect` komutu ile LABEL görüntülenebilir.
 image ye metadata ekler. Anahtar değer çiftidir.
 Kullanım formu:\
 `LABEL <key>=<value> <key>=<value> <key>=<value> ...`
+
+[Dockerfile](/examDockerFiles/label/Dockerfile) \
+Genellikle `maintainer` olara belirtilen image bakımını yapan kişinin bilgileri bulunur. 
+
+`docker image build --tag customcentos .` \
+`docker image inspect customcentos:latest` \
+![docker image build](/img/docker_build_p11.png)
 
 ## [MAINTAINER](https://docs.docker.com/engine/reference/builder/#maintainer-deprecated) (kullanımdan kaldırıldı)
 Kullanımdan kaldırıldı. Yerine LABEL parametresi kullanılabilir.
@@ -125,10 +150,28 @@ Kullanımdan kaldırıldı. Yerine LABEL parametresi kullanılabilir.
 Oluşturulan image ler ile ilgli MAINTAINER (yazar) metadata verisi ekler.
 
 ## [EXPOSE](https://docs.docker.com/engine/reference/builder/#expose)
-Protocol belirtilmez ise TCP olarak varsayılan değeri bulunmaktadır. container çalıştırılırken -p --port parametresi ile hangi portların yayınlanması amaçlandığı belirtilir. 
+Container içerisinde çalışan uygulama bir veya daha fazla portu dinlemeye başlar. Hangi portların dinlendiğini belirtmek için kullanılır. 
 
 Kullanım formu:\
-`EXPOSE <port> [<port>/<protocol>...]`
+`EXPOSE <port> [<port>/<protocol>...]` \
+
+Protocol belirtilmez ise TCP olarak varsayılan değeri bulunmaktadır.
+
+Dockerfile içerisinde yanlızca EXPOSE kullanımı dış dünyaya portu direkt olarak açmaz. Docker a image üzerinden container oluşturulduğunda hangi portların açılması gerektiğini bildirir. 
+
+Birden fazla port yazılacak ise yan yana aralarında boşluk bırakarak yazılabilir.
+
+`EXPOSE 80/tcp 53/udp`
+
+container çalıştırılırken -p --port parametresi ile hangi portların yayınlanması amaçlandığı belirtilir. 
+
+`docker container run --name pywebv4 -p 80:9000 -d pyweb:v4` \
+![](/img/docker_container_p16.png)
+
+-P parametresi kullanılarak EXPOSE ile bildirilen porta dış dünyadan 30000 üzerindeki bir portla otomatijk eşleştirilmesi sağlanır.
+
+`docker container run --name pywebv4 -P -d pyweb:v4` \
+![docker container run](/img/docker_container_p15.png)
 
 > [expose.dockerfile](examDockerFiles\expose.dockerfile)\
 `FROM nginx`\
@@ -137,10 +180,10 @@ Kullanım formu:\
 
 
 Örnek\
-`docker run -d -p 80:80 nginx`
+`docker run -d -p 80:80 nginx` 
 
 ## [ENV](https://docs.docker.com/engine/reference/builder/#env)
-container üzerinde çevresel değişenler, ortam değişkenleri ayarlar. Tek bir satırda birden fazla ortam değişkeni ayarlanabilir. key value arasında eşittir `=` işareti kullanılmaz ise tek bir satırda bir ortam değişkeni tanımlanmalıdır.\
+container üzerinde çevresel değişenleri, ortam değişkenlerini ayarlar. Tek bir satırda birden fazla ortam değişkeni ayarlanabilir. key value arasında eşittir `=` işareti kullanılmaz ise tek bir satırda bir ortam değişkeni tanımlanmalıdır.\
 Kullanım formu:\
 `ENV <key>=<value> ...`
 
@@ -154,11 +197,16 @@ Kullanım formu:\
 `docker attach ee`\
 ![docker build](/img/docker_build_p1.png)
 
+ENV ayrıca `docker container run` veya `docker run` komutu ile beraber `-e` yada `--env` parametresi ile de belirtilebilir. `-e`,`--env` parametresi ile Dockerfile içerisinde yazan değeri ezer ve komut satırından belirtilen ortam değişkenleri baskın olacaktır.
+
 ## [ENTRYPOINT](https://docs.docker.com/engine/reference/builder/#entrypoint)
 Yaratılan image çalıştırılacak container olarak ayarlandığında ENTRIPOINT olarak ayarlanmış fonksiyon ile başlatılır.
 iki kullanım formu vardır
-1. `ENTRYPOINT ["executable", "param1", "param2"]` (exec tipi)
-2. `ENTRYPOINT command param1 param2` (shell tipia)
+1. EXEC FORMU: \
+`ENTRYPOINT ["executable", "param1", "param2"]`
+2. SHELL FPRMU : \
+`ENTRYPOINT command param1 param2` \
+Shell formu kullanıldığında CMD direktifi ve `docker container run` komutu üzerinden verilen image isminden sonra yazılan değer dikkate alınmaz. Alınması isdeniyorsa exec formu kullanılmalıdır.
 
 >[entrypoint.dockerfile](examDockerFiles\entrypoint.dockerfile)\
 `FROM ubuntu`\
@@ -184,6 +232,8 @@ Dockerfile ile oluşturulan image ler varsayılan olarak root kullanıcı ile ç
 
 Kullanıcı daha önce varsayılan kullanıcılar arasında yoksa önce kullanıcı oluşturulmalı sonra USER komutunda bu kullanıcı kullanılmalıdır.
 
+[Namespace](/linux_namespace.md) içerisinde geçerli olan UID (User ID) ve GID(grup ID) değerlerini değiştirmeyi saplar. Dockerfile ile oluşturulan image root kullanıcısı olarak başlatılır. Ardından sistemi bir kullanıcı ekleyerek ve o kullanıcı hesabı ile işlemlerimize (RUN, ENTRYPOINT, CMD) devam edeceğimizi belirmek için USER ifadesi kullanılıyor.
+
 windows için
 >`FROM microsoft/windowsservercore`\
 `# Create Windows user in the container`\
@@ -194,7 +244,7 @@ windows için
 linux için
 >[user.dockerfile](examDockerFiles\user.dockerfile)\
 >`FROM centos`\
-`RUN adduser newuser`\
+`RUN useradd newuser`\
 `USER newuser`\
 `CMD whoami`
 
@@ -207,17 +257,19 @@ dockerfile içerisinde WORKDIR ayarlanmamış ise base image tarafından ayarlan
 Kullanım şekli\
 `WORKDIR /path/to/workdir`
 
+Dockerfile içerisinde WORKDIR satırından sonra gelen işlemler, direktifler (RUN,ENTRYPOINT,CMD) ve image içerisine dosya eklemeye yarayan komutlar (ADD,COPY) WORKDIR ile belirtilen dizin üzerinde işlem yaparlar. `pwd` komutu ile bu öğrenilebilir. Kısacası relative path olarak işlem görecektir.
+
 >[workdir.dockerfile](examDockerFiles\workdir.dockerfile)\
 `FROM centos`\
 `RUN adduser newuser`\
 `WORKDIR /home/`\
 `CMD pwd`
 
-
 `docker build -t workdircentos -f workdir.dockerfile .`\
 `docker run -ti workdircentos`
 
 ## [VOLUME](https://docs.docker.com/engine/reference/builder/#volume)
+Çalışacak olan image üzerinde kalıcı olması gereken dosyalar olabilir. Veritabanı dosyaları, web sunucusu içerisinde statik dosyalar, ayar dosyalarının bulunduğu dizinler VOLUME ile docker a bildirilir.
 
 Host makine ve konteyner arasında dizin bağlama işlevini yerine getirir.
 
@@ -449,4 +501,7 @@ Komutlar arasında kullanılır ve iki komutu birbirine birleştirir.
 `komut1 || komut2` komut1 olumlu bir sonuç döndürürse komut2 çalıştırılmaz. komut1 hatalı bir sonuç döndürürse komut2 çalışır.
 >## GREP komutu
 Arama için kullanılır.
+
+>## İstediğimiz boyutta fake bir dosya oluşturmak
+`dd if=/dev/zero of=bosdosya bs=10M count=1`
 
