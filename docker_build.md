@@ -90,7 +90,7 @@ Farklı bir örrnek Dockerfile içeriği:
 
 ### [ARG](https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact)
 ARG ve FROM nasıl etkileşim içerisindedir. ARG FROM ifadesinin önüne gelerek bir değişten içerisine değer atama işlemini sağlar ve sonrasında FROM satırında değişken kullanımı sağlanmış olur.
-
+[Dockerfile](/examDockerFiles/arg/Dockerfile) \
 `docker image build --tag pythoncustom:v2 .` \
 `docker container run --rm pythoncustom:v2` \
 
@@ -99,6 +99,9 @@ ARG ve FROM nasıl etkileşim içerisindedir. ARG FROM ifadesinin önüne gelere
 `docker container run --rm pythoncustom:v3` \
 
 ![docker container run](/img/dockerfile_p04.png)
+### NOT: ARG kullanımında dikkat edilmesi gereken, kullanıcı adı ve şifre gibi anahtar bilgileri Dockerfile a koymak yerine `--build-arg` ile parametre olarak vermek mantıklı geliyorsa da, yaratılan image üzerinden docker image history çalıştıran birisi tüm ARG değerlerini görebilir. Bu yüzden kullanıcı adı/parola gibi değişkenleri image argüman olarak vermek iyi bir yöntem değildir.
+
+![docker container run](/img/dockerfile_p10.png)
 
 ## [ADD](https://docs.docker.com/engine/reference/builder/#add)
 Container içerisine dosya kopyalamak için kullanılır. 
@@ -287,7 +290,20 @@ docker çalıştıran sunucu içerisindeki `/var/lib/docker/volumes` yolunda con
 
 ## [ONBUILD](https://docs.docker.com/engine/reference/builder/#onbuild)
 
-ONBUILD parametresi ile eklenen komutlar eklendiği dockerfile imagesi başka bir image içerisinde kullanıldığında tetiklenerek çalışır.
+ONBUILD parametresi ile eklenen komutlar eklendiği dockerfile imagesi başka bir image içerisinde kullanıldığında tetiklenerek çalışır. 
+
+Bulunduğu Dockerfile ile oluşturulan image ler üzerinde bir değişikliğe neden olmaz. ONBUILD ile yazılan direktiflerin çalışabilmesi için oluşturulan image üzerinden base alınarak tekrar bir image oluşturulması şarttır.\
+[Dockerfile](/examDockerFiles/onbuild/Dockerfile) \
+![Dockerfile](/img/dockerfile_p05.png)
+`docker image build --tag baseimage .` \
+`docker container run --rm baseimage` \
+Herhangi bir çıktı alınmaz.
+
+`docker image build --file base.Dockerfile --tag baseimage:v2 .` \
+![Dockerfile](/img/dockerfile_p07.png) \
+`docker container run --rm baseimage:v2` \
+![Dockerfile](/img/dockerfile_p06.png)
+
 
 ## [SHELL](https://docs.docker.com/engine/reference/builder/#shell)
 
@@ -297,9 +313,38 @@ Kullanım şekli:\
 Varsayılan kabul linux için `["/bin/sh", "-c"]` windows için `["cmd", "/S", "/C"]` dir.
 
 dockerfile içerisinde yazılan birden çok shell talimatları bir öncekini geçersiz kılar.
+## [STOPSIGNAL](https://docs.docker.com/engine/reference/builder/#stopsignal)
+Container i durdurmak istediğimizde ona hangi sinyalin gideceğini belirtmemize yarar.
+
+[Dockerfile](/examDockerFiles/pywebv3/Dockerfile) \
+`docker image build --tag stopexam .` \
+`docker container run -d stopexam sleep 3000` \
+`docker container ls` \
+`docker container stop 74f1839f1697`
+
+Docker file içerisinde `STOPSIGNAL SIGHUP` kullanıldığında container hemen sonlanmaz. O an varolan işlemi sonuçlandırana kadar çalışmaya devam eder. Ancak bu arda yeni bir iş geldiğinde onu başlatmaz ve güvenli bir şekilde sonlandırır. 
+
+Ancak `STOPSIGNAL SIGKILL` deyimi direkt container ı sonlandırmak için kullanılır. Veri kaybına neden olabilir.
+
+## [HEALTCHECK](https://docs.docker.com/engine/reference/builder/#healthcheck)
+Container ın o anda sağlıklı çalışıp çalışmadığını kontrol etmek için kullanılır. \
+[Dockerfile](/examDockerFiles/pywebserponse/Dockerfile) \
+`docker image build --tag pythonweb .` \
+`docker container run --rm -p 80:80 pythonweb` \
+`docker container run --rm --name api -d -p 80:80 -e WAIT_TIME=2 pythonweb` \
+`watch docker ps` \
+![HEALTCHECK](/img/dockerfile_p09.png)
+
+Dockerfile içerisindeki \
+`HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl -f http://127.0.0.1:80/number || exit 1` \
+bu direktif 30 saniye aralıklarla CMD teriminden sonraki komutu çalıştırıyor. Zaman aşımı 30 saniye olarak belirtilmiştir. 3 Kez başarısız olursa container UNHEALTY (sağlıksız) olarak işaretleniyor. İlk açılış işlemleri belirli bir süre alacağı için bu kontrolü belirli bir zaman yapmamak için `--start-period` olarak 5 sayine verilmiş durumda. 
+
+`watch docker ps` ile docker üzerindeki bütün containerların çalışan uygulamaları izlenebilmektedir. Bu komut kullanılarak healt durumu anlık izlenebilir. 
+
+`docker container run --rm --name api -d -p 80:80 -e WAIT_TIME=30 pythonweb` \
+![HEALTCHECK](/img/dockerfile_p08.png)
 
 ## [.dockerignore file](https://docs.docker.com/engine/reference/builder/#dockerignore-file)
-
 
 
 >[dockerignore.dockerfile](examDockerFiles/dockerignore.dockerfile)\
@@ -314,6 +359,34 @@ dockerfile içerisinde yazılan birden çok shell talimatları bir öncekini ge�
 `docker build -t devcentos -f dockerignore.dockerfile .`\
 `docker run -ti devcentos`\
 ![docker ignore](/img/docker_build_p8.png)
+
+## IMAGE KATMANLARI
+history komutu ile image yi oluşturan katmanlar görüntülenebilir ve her katmanın boyutu hakkında bilgi edinilebilir. \
+Kısa gösterim \
+`docker image history pythoncustom:v3` \
+
+![docker image history](/img/dockerfile_p10.png)
+Uzun Gösterim \
+`docker image history --no-trunc pythonweb:latest` \
+
+Yukarıdaki örnekte IMAGE bölümü altında missing yazılan katmanlar indirilmiş katmanlar, eğer 256 bit UUID (universally unique identifier) bir değer içeriyorsa docker host üzerinde oluşturulmuş bir katman olduğunu göstermektedir ve bu ara katmanlara intermediate image denilir.
+
+imageleri görselleştirmek için dockviz imagesinden ve graphviz paketinden yararlanılabilir.
+
+`sudo apt-get install graphviz -y` 
+
+`docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz images --dot | dot -Tpng -o images.png`
+
+## TEK KATMANLI IMAGE OLUŞTURMAK [--squash](https://docs.docker.com/engine/reference/commandline/image_build/#options)
+[aemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) \
+`echo $'{\n    "experimental": true\n}' | sudo tee /etc/docker/daemon.json` \
+`docker image build --squash --tag pyweb .`
+
+
+## IMAGE bulmak 
+`docker search nginx` \
+komutu ile hub.docker.com üzerinde image ara yapılabilir. Yada direkt web sitesi üzerinden de bu işlem yapılabilir.
+![docker search](/img/docker_search_p01.png)
 
 > ## **NOT: Eğer dockerfile dosyası içerisinde yukarıdan aşağıya doğru çalıştırılan komutlar içerisinde çok fazla değişiklik yapılan dosyalara atıf var ise değişiklik yapılan dosyalar, dockerfile dosyasının sonlarına doğru olması docker image build işleminde yaatılan layer ların daha hızlı build işlemine tabi tutulması ve cache üzerinden işlem yapılmasını sağlayacaktır.**
 ## ORNEK
