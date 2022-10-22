@@ -373,5 +373,10 @@ b. image içerisinde ki klasörde dosya var ise ve volume boş ise bu sefer o kl
 # BASH script dili kullanılarak birden fazla container oluşturmak.
 `for number in {1..3};do docker container run -ti -d --name sunucu${number} alpine; done;`
 
+# IMAGE bulmak 
+`docker search nginx` \
+komutu ile hub.docker.com üzerinde image ara yapılabilir. Yada direkt web sitesi üzerinden de bu işlem yapılabilir.
+![docker search](/img/docker_search_p01.png)
+
 # Araştırma Konusu
 Bocker
