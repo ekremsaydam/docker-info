@@ -378,7 +378,7 @@ imageleri görselleştirmek için dockviz imagesinden ve graphviz paketinden yar
 `docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz images --dot | dot -Tpng -o images.png`
 
 ## TEK KATMANLI IMAGE OLUŞTURMAK [--squash](https://docs.docker.com/engine/reference/commandline/image_build/#options)
-[aemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) \
+[Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) \
 `echo $'{\n    "experimental": true\n}' | sudo tee /etc/docker/daemon.json` \
 `docker image build --squash --tag pyweb .`
 
