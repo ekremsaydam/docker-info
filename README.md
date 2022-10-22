@@ -144,6 +144,11 @@ NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sür�
 `sudo snap install docker`
 `sudo apt-get install virtualbox—ext–pack`
 
+*18 - python pip aracılığı ile docker-compose yüklemesi. \
+`sudo apt-get install python3-pip -y` \
+
+*
+
 <hr>
 
 # DOCKER IMAGE

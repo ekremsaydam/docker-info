@@ -1,8 +1,8 @@
 # DOCKER COMPOSE
-Büyük yapılar için web sunucuları, veritabanı utgulamaları, caching mekanizmaları, mikro servisler, back end servisleri gibi birbirine bağlı olarak çalışan birçok uygulamayı ayrı ayrı oluşturmak yerine tek seferde oluşturarak zamandan tasarruf etmek için docker compose kullanılır. Dockerfile tek bir container yaratmak ve çalıştırmak için kullanılırken docker-compose birden fazla çoklu container oluşturmamıza olanak sağlar.
+Büyük yapılar için web sunucuları, veritabanı uygulamaları, caching mekanizmaları, micro services, back end servisleri gibi birbirine bağlı olarak çalışan birçok uygulamayı ayrı ayrı oluşturmak yerine tek seferde oluşturarak zamandan tasarruf etmek için docker compose kullanılır. Dockerfile tek bir container yaratmak ve çalıştırmak için kullanılırken docker-compose birden fazla çoklu container oluşturmamıza olanak sağlar.
 
-Birden fazla container ı yml dosyası olarak tanımlamak için kullanılıyor. Docker compose product ortamlar için uygun değildir. Daha çok development tarafı için kullanılmaktadır.\
-[YAML YML](https://yaml.org/)\
+Birden fazla container ı YML dosyası olarak tanımlamak için kullanılıyor. Docker compose product ortamlar için uygun değildir. Daha çok development tarafı için kullanılmaktadır.\
+[YML YAML: YAML Ain't Markup Language](https://yaml.org/)\
 [Compose file specification](https://docs.docker.com/compose/compose-file/)
 
 docker-compose.yml dosyasının ana bölümleri (top level):
@@ -378,3 +378,15 @@ Replikasyon sayısı artırılabilindiği gibi aynı zamanda düşürülebilir.
 [Dockerfile](/docker-compose/webmysqldockerfile/Dockerfile)
 
 ## Yukarıdaki dosyalardan yararlanılarak web klasörü içerisinde değişiklik yapıldığında image ninde bu değişiklikleri yapabilmesi için mutlaka `docker-compose build` yapılmalıdır. build yapılmadan `docker-compose up` denildiğinde sunucu çalışır ancak eski dosyalar sunucu üzerinde görüntülenir. Bunun nedeni `docker-compose down` ile image nin silinmemesidir.
+
+
+# ÖRNEKLER
+[docker-compose.yml](/docker-compose/databases/docker-compose.yml) \
+`docker compose up` \
+`docker compose down` \
+MySQL, phpmyadmin, MariaDB, PostgreSQL, Adminer, mongo, mongo-express docker compose ile container olarak başlatılması.
+
+[volume.docker-compose.yml](/docker-compose/databases/volume.docker-compose.yml) \
+stateful olarak databaseleri çalıştırmak için volume ilişkilerini yaratarak container kapatılsa yada silinse dahi volumeler kalacaktır. yeniden docker-compose çalıştırılarak container oluşturulur ve verilerimiz silinmediği için database kaldığı yerden devam eder. \
+Aşağıdaki gibi docker compose aracılığı ile containerlar silindiğinde volume lerde silinecektir. \
+`docker compose down -v` 
