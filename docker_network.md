@@ -10,18 +10,54 @@ Ethernet Bridge arayüzü **docker0** adıyla gelir. Host tarafından docker0 ko
 
 [Network containers](https://docs.docker.com/engine/tutorials/networkingcontainers/)
 
-![docker0](/img/docker_network_docker0_bridge.png)
-
+![docker0](/img/docker_network_docker0_bridge.png) \
+Docker kurulumu ile beraber gelen varsayılan olarak 3 farklı ağ bulunur. Docker üzerindeki o anda bulunan networkleri listelemek için `docker network ls` komutu kullanılır. \
 ![ifconfig](img/docker_network_p2.png)
 ### **1. bridge**
-IP, subnet ve gateway otomatik olarak container a atanır. container dış dünya ile host üzerinden internet ile haberleşebilir. Ancak dış dünyadan bu container a erişilebilmesi için port yönlendirmesi yapılması gerekir.\
+IP, subnet ve gateway otomatik olarak container a atanır. container dış dünya ile host üzerinden internet ile haberleşebilir. Container içerisinden dış ağa çıkılması için arada NAT (Network Address Translation) olduğu söylenilebilir. Ancak dış dünyadan bu container a erişilebilmesi için port yönlendirmesi yapılması gerekir.
+
 **NOT**:*bridge modunda kullanılan container lar birbirleri ile haberleşebilir.*
 
+Container IP lerini belirlemek için ayrıca DHCP (Dynamic Host Configuration Protocol) sunucusu kurmamıza gerek yoktur. Docker IP ataması işlemlerini kendisi yönetir. Otomatik olarak 172.17.0.0/16 subnet ine ait IP adresleri dağıtılır. Aşağıdaki komut kullanılarak bu görüntülenebilir. \
+`docker network inspect bridge` \
+![docker network inspect bridge](/img/docker_network_p8.png)
+
+NOT: `docker container run` veya `docker run` komutu kullanıldığında oluşturulan container varsayılan olarak `bridge` network üne dahil edilir. \
+`docker run --rm --network bridge -ti centos bash` \
+`ip addr` \
+![](/img/docker_network_p9.png)
+
+- **default bridge networkü üzerinde dns desteği yoktur.** Ancak kullanıcı tanımlı bridge networkü oluşturulduğunda docker container ismi ile containerların birbirleri arasında haberleşsin diye basit olarak bir dns kurulur ve container isimleri üzerinden işlem yapılması sağlanır.*
+
+Bridge network driver kullanılarak farklı iki networkler oluşturulmuş olsun. Oluşturacağımız container ın biri bir network diğeride diğer network e dahil olacak şekilde çalıştırdığımızı düşünün. Birbirlerine ping atmak istediklerine atamayacakları bilinmelidir.
+
+![docker network](/img/docker_network_p14.png) \
+![docker network](/img/docker_network_p15.png) \
+
 ### **2. host**
-host makinesinin ip ve port bilgileri container ile paylaşılır.
+![docker network inspect host](/img/docker_network_p10.png) \
+host makinesinin ip ve port bilgileri container ile paylaşılır. \
+`docker run --rm --network host -ti centos bash` \
+`ip addr` \
+![](/img/docker_network_p11.png)
+
+Docker host makinasının IP bilgileri :\
+![](/img/docker_network_p12.png)
 
 ### **3. none**
-loopback olarak kullanılmasını sağlar. Bu durumda container diğer containerlar ve dış dünya ile iletişim kuramaz.
+loopback olarak kullanılmasını sağlar. Bu durumda container diğer containerlar ve dış dünya ile iletişim kuramaz. \
+`docker run --rm --network none -ti centos bash` \
+`ip addr` \
+![](/img/docker_network_p13.png)
+
+### **4. overlay**
+bridge (köprü) ağları tek bir docker host üzerinde istediğimiz izalasyonu ve ağ yapılandırmasını sağlamak için işimizi görmektedir. Ancak birden fazla docker host bulunduğu bir ortamda kendi aralarında haberleşmek için yeterli olmamaktadır.
+
+Eğer Docker Swarm aktif edildi ise overlay driver ı ile oluşturulmuş bir ağ yapılandırılmış olarak gelmektedir. Bu sürücü VXLAN (Virtual Extensible LAN) olarak adlandırılır.
+
+VXLAN - Virtual Extensible LAN :Bu ağ çeşidi kullanılarak IP katmanlarının üstünde UDP paketleri içerisinde ETHERNET paketleri gönderilerek farklı komunlarda bulunan bilgisayarların aynı fiziksel ortamda, aynı switch üzerinde bağlı bilgisayarlarmış gibi birbirleri ile haberleşmesini sağlamak için kullanılan bir teknolojidir.
+
+VXLAN üzerinde oluşturulmuş olsa bile farklı ağlar üzerine eklenmiş olan containerları birbirlerini göremeyecek şekilde yapılandırmayıda desklediği gibi, yük dengelemek için DNS Round Robin veya IPVS (IP Virtual Server) desteklemesi, service discovery gibi teknolojileri desteklemesi ve docker üzerinde key-value storage olarak saklanması ayrıca bir kurulum gerektirmemesi gibi ek özellikleride barındırmaktadır.
 
 | Command        | Description |
 | -------------- | ----------- |

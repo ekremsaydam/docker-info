@@ -390,3 +390,10 @@ MySQL, phpmyadmin, MariaDB, PostgreSQL, Adminer, mongo, mongo-express docker com
 stateful olarak databaseleri çalıştırmak için volume ilişkilerini yaratarak container kapatılsa yada silinse dahi volumeler kalacaktır. yeniden docker-compose çalıştırılarak container oluşturulur ve verilerimiz silinmediği için database kaldığı yerden devam eder. \
 Aşağıdaki gibi docker compose aracılığı ile containerlar silindiğinde volume lerde silinecektir. \
 `docker compose down -v` 
+
+
+## ORNEK 2
+github üzerinde bulunan bir basit bir anket sistemini ayağa kaldırmak. \
+5000 portu anket için anket sonuçları için 5001 kullanılıyor. \
+`git clone https://github.com/dockersamples/example-voting-app.git` \
+`docker compose up`
