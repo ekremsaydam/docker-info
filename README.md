@@ -331,6 +331,7 @@ https://docs.docker.com/config/containers/resource_constraints/
 
 # VOLUME ILE CALISMAK
 [Use volumes](https://docs.docker.com/storage/volumes/)\
+[Detaylı bilgi docker_volume.md](/docker_volume.md) \
 Container dışında veri saklamak için kullanılır. Bir containerda sorun olduğunda yeni bir container oluşturup aynı volume kullanmasını sağlayabiliriz.
 
 Farklı container lar arasında yaratılan bir volume ortak olarak kullanılabilir.

@@ -141,3 +141,6 @@ docker host ipaddress i kullanılarak açılan pencerede kullanıcı adı **root
 ![docker network](/img/docker_network_p7.png)\
 `docker network disconnect bridge websunucu`\
 `docker network disconnect bridge database`\ 
+
+## ARAŞTIRMA KONUSU
+[Bridge driver options](https://docs.docker.com/engine/reference/commandline/network_create/#bridge-driver-options)

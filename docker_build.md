@@ -272,6 +272,8 @@ Dockerfile içerisinde WORKDIR satırından sonra gelen işlemler, direktifler (
 `docker run -ti workdircentos`
 
 ## [VOLUME](https://docs.docker.com/engine/reference/builder/#volume)
+[Detaylı bilgi docker_volume.md](/docker_volume.md) 
+
 Çalışacak olan image üzerinde kalıcı olması gereken dosyalar olabilir. Veritabanı dosyaları, web sunucusu içerisinde statik dosyalar, ayar dosyalarının bulunduğu dizinler VOLUME ile docker a bildirilir.
 
 Host makine ve konteyner arasında dizin bağlama işlevini yerine getirir.
