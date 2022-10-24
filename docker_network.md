@@ -109,6 +109,31 @@ En sık kullanılan format 1. formattır. Örnek olara\
 `docker run --name c_nginx -d -p 55:80 nginx`
 host makinesinin ip adresi kullanılarak 55 numaralı port ile nginx e erişilebilir.
 
+## DIŞARIDAN ERİŞİM
+### [NGROK](https://ngrok.com/download)
+
+    curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
+
+`ngrok config add-authtoken <token>` 
+
+token bölümüne https://ngrok.com/ adresine üye olup aldığınız Authtoken buraya yazarak artık dış dünyadan gelen istekleri docker container içerisine açabiliyoruz.
+
+`docker run -d --name gateway -p 80:80 nginx` \
+`ngrok http 80`
+
+## SSH Tünel üzerinden 
+
+[SSH Tunneling](https://www.ssh.com/academy/ssh/tunneling-example#remote-forwarding)
+
+[gateway_clientspecified.Dockerfile](/docker-compose/ssh/gateway_clientspecified.Dockerfile) \
+Aşağıda nginx container oluşturmada port publish edilmediğine dikkat edin. \
+`docker run -d --name gateway nginx` \
+`docker image build -t openssh-server:gateway -f gateway_clientspecified.Dockerfile .` \
+`docker container inspect gateway` \
+`docker container run --name opensshsrv -p 2200:22 -p 4444:4444 -d openssh-server:gateway` \
+`ssh root@172.17.0.3 -R 0.0.0.0:4444:172.17.0.2:80` 
+![ssh tunaling](/img/docker_ssh%20tunneling_view.png)
+
 ## ÖRNEK
 
 `docker container run -d --name cnginx nginx`\
@@ -141,6 +166,9 @@ docker host ipaddress i kullanılarak açılan pencerede kullanıcı adı **root
 ![docker network](/img/docker_network_p7.png)\
 `docker network disconnect bridge websunucu`\
 `docker network disconnect bridge database`\ 
+
+
+
 
 ## ARAŞTIRMA KONUSU
 [Bridge driver options](https://docs.docker.com/engine/reference/commandline/network_create/#bridge-driver-options)
