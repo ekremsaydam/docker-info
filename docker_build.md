@@ -548,8 +548,21 @@ NOT: İstenirse `--change` parametresi kullanılarak container dan image yapıl�
 # LINUX SHELL KISA BILGI
 >## ECHO
 console istenilen değeri çıktı olarak yazdırmak için kullanılır.\
-`printenv`\
-`echo $HOME`
+`printenv` (Environment List)\
+`export MY_VAR=hello` (Environment Set)\
+`echo $MY_VAR` (Environment çıktısı)\ 
+`printenv MY_VAR` (Environment çıktısı) 
+
+Windows - PowerShell \
+`Get-ChildItem Env:` (Environment List) \
+`$env:MY_VAR = 'hello'` (Environment Set) \
+`echo $Env:MY_VAR` (Environment çıktısı)
+
+
+Windows - Command Line \
+`set` (Environment List) \
+`set MY_VAR=hello` (Environment Set) \
+`echo %MY_VAR%` (Environment çıktısı)
 
 > ## > (büyüktür) İŞARETİ
 azılan komuttan sonra > işareti kullanılırsa çıktı olarak ekrana basılacak ifadenin yönelendirilerek bir dosyaya yazılması için kullanılır. Dosya önceden var ise silinir ve tekrar oluşturulur.

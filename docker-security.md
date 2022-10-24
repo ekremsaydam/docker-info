@@ -24,9 +24,9 @@ CN olarak FQDN ismi kullanılmalıdır.
 5. Dosya izinlerinin Ayarlanması \
 Anahtarların güvenliklerini varsayılan olarak 644 olarak belirlenmiştir. Bu izinleri 400 olarak değiştirelim ve ihtiyacımız olmayan .csr ve .cnf dosyalarını silelim.\
 `chmod 400 *.pem` \
-`chmod 444 *.csr` \
+`chmod 444 *.csr`
 
-6. Docker Daemon yeni ayarlarla başlatılması
+6. Docker Daemon yeni ayarlarla başlatılması \
 `systemctl stop docker` \
 `dockerd --tlsverify --tlscacert=docker-ca.pem --tlscert=server-cert.pem --tlskey=server-key.pem -H=0.0.0.0:2376` \
 `systemctl start docker`

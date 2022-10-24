@@ -1,5 +1,5 @@
 # [DOCKER SWARM](https://docs.docker.com/engine/reference/commandline/swarm/) - [Getting started with swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/)
-Swarm orchestration; docker hostların bir cluster (küme) halinde dağıtımının, yönetiminin ve ölçeklendirilmesinin sağlayan docker engine gömülü bir yapıdır. Yani docker engin yüklendiğinde swarm da kullanılabilir olarak sunuluyor.
+Swarm orchestration; docker hostların bir cluster (küme) halinde dağıtımının, yönetiminin ve ölçeklendirilmesinin sağlayan docker engine gömülü bir yapıdır. Yani docker engine yüklendiğinde swarm da kullanılabilir olarak sunuluyor.
 
 Swarm içerisinde her bir docker host **node** olarak adlandırılır. Bu docker host lar sanal yada fiziksel yada cloud üzerinde bir makine olabilir.
 
@@ -64,7 +64,7 @@ docker swarm declarative olarak çalışan bir uygulamadır ve herhangi bir şey
 | -------------- | ----------- |
 | `docker swarm`  | docker swarm ile beraber kullanılabilecek komutların bir listesini gösterir.[docker swarm](https://docs.docker.com/engine/reference/commandline/swarm/)|
 |`docker swarm init --advertise-addr 192.168.0.24`| Üzerinde komut çaıştırılan node manager node olarak işaretlenmiş olur. [docker swarm init](https://docs.docker.com/engine/reference/commandline/swarm_init/) <br><br> ![docker swarm init](/img/docker_swarm_p2.png)|
-|`docker info`| komut docker hakkında bilgi verir. docker swarm modunun aktif edilmesinin görüntülenmesi [docker info](https://docs.docker.com/engine/reference/commandline/info/)<br><br> ![docker info](/img/docker_swarm_p3.png)|
+|`docker info`| komut docker engine hakkında bilgi verir. docker swarm modunun aktif edilmesinin görüntülenmesi [docker info](https://docs.docker.com/engine/reference/commandline/info/)<br><br> ![docker info](/img/docker_swarm_p3.png)|
 |`docker swarm join-token manager`| komut **manager** node eklemek için gerekli komutun ne olduğu gösterir. Bu komutu eklemiş olduğumuz manager node üzerinde çalıştırıyoruz. [docker swarm join-token](https://docs.docker.com/engine/reference/commandline/swarm_join-token/) <br><br> ![docker swarm join-token](/img/docker_swarm_p5.png)|
 |`docker swarm join --token SWMTKN-1-26afrz41wobj22iyx7vhkwoeiy6q4z9m06hd759ycpcr4o9lqf-cmusve5b2xs9ky9ln4umziwsa 192.168.0.24:2377`| manager node eklemek için docker engine modunda çalışan herhangi bir node gidilir ve komut çalıştırılarak **manager** node olarak işaretlenmesi sağlanır. [docker swarm join](https://docs.docker.com/engine/reference/commandline/swarm_join/) <br><br> ![docker swarm join](/img/docker_swarm_p6.png)|
 |`docker swarm join-token worker`| komut **worker** node eklemek için gerekli komutun ne olduğu gösterir. Bu komutu eklemiş olduğumuz manager node üzerinde çalıştırıyoruz. [docker swarm join-token](https://docs.docker.com/engine/reference/commandline/swarm_join-token/) <br><br> ![docker swarm join-token](/img/docker_swarm_p7.png)|
@@ -153,4 +153,22 @@ Yukarıdaki komutlar çalıştırılıp hub.docker.com üzerindeki repositıry y
 |`docker service update --help`| Update ile ilgili kullanılabilecek opsiyonları gösterir. Update işlevi Mevcut container yada service üzerinde bir değişiklik yapmaz. Yeni bir container oluşturur. İlk önce varolan containerı siler sonrasında yeni image üzerinden yeni container oluşturur. Bunuda aynı anda bütün containerları silerek değil adım adım ilk containerı siler sonrasında yenisini oluşturarak yaparve bu şekilde erişilebilirlik kesintiye uğramadan web sunucuları hizmet vermeye devam edecektir. [docker service update](https://docs.docker.com/engine/reference/commandline/service_update/)|
 |`docker service update --update-delay 10s --update-parallelism 2 --image esaydam/phpweb:v2 websrv` <br>`docker service update --update-delay 10s --update-parallelism 2 --image esaydam/phpweb:v2 --detach websrv` <br><br>`watch docker service ps websrv`| websrv servisini aynı anda 2 container olacak şekilde 10 saniye aralıklarla image lerini update etmek için kullanılır. [docker service update](https://docs.docker.com/engine/reference/commandline/service_update/)<br>![docker service update](/img/docker_swarm_p23.png) <br><br> Eğer istenirse `--detach` kullanılarak tekrar shell ekranına düşürülmesi sağlanır. İzlemek için ise `watch` komutundan yararlanılabilir.|
 |`docker service rollback  websrv`<br>`docker service rollback --detach websrv`<br><br>`watch docker service ps websrv`|Update işlemi başarısız olursa sistemi bir önceki versiyona geri yüklemek için kullanılır. [docker service rollback](https://docs.docker.com/engine/reference/commandline/service_rollback/)<br>![docker service rollback](/img/docker_swarm_p25.png)|
+
+# EXTRAS
+`sshpass -p "parola" scp -P 22 Dockerfile root@172.17.0.2:/ ` \
+scp ile ssh üzerinden dosya kopyalama. sshpass şifre sormasını istemediğimiz için pass geçmesini sağlamak adına komut satırından kullanımı.
+
+## ARAŞTIRMA KONUSU
+
+`export DOCKER_TLS_VERIFY="1" `\
+Uzaktaki makinaya bağlanırken  TLS doğrulaması sırasında sertifika doğrulanmaz ise bağlantı kurulmayacağını belirtir. Bu sayede bağlantının güvenliği için önlem alınmış olur.
+
+`export DOCKER_HOST="tcp://192.168.49.2:2376"` \
+tcp protocol ü ile belirtilen ip üzerine docker daemon varsayılan portu 2376 kullandığı için bu port üzerinden bağlantı yapılacağı bildirilir.
+
+`export DOCKER_CERT_PATH="/home/devops/.minikube/certs"` \
+TLS doğrulaması yapılabilmesi için kullanılacak sertifikaların path bilgisi gösteriliyor.
+
+`export DOCKER_MACHINE_NAME="minikube"` \
+Makinenin ismi veriliyor.
 
