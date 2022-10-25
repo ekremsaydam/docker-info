@@ -42,6 +42,17 @@ https://localhost:9443/
 
 `docker stack deploy -c portainer-agent-stack.yml portainer`
 
+## GÜNCELLEŞTİRME
+[Upgrading Portainer](https://docs.portainer.io/start/upgrade)
+[Portainer Upgrading on Docker Swarm](https://docs.portainer.io/start/upgrade/swarm)
+
+`docker pull portainer/portainer-ce:latest`
+
+    docker service update --image portainer/portainer-ce:latest --publish-add 9443:9443 --force portainer_portainer
+
+`docker pull portainer/agent:latest`
+
+    docker service update --image portainer/agent:latest --force portainer_agent 
 # REGISTRY KURULUM (PORTAINER ile)
 Şimdiye kadar hep hub.docker.com üzerinden image pull ve push işlemlerini yaptık. Docker Hub 1 tane private repository e izin vermektedir. Kurumumuza özel repository i bir noktada saklama ihtiyacını gidermek için registry kullanılabilir.
 
