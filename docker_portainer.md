@@ -33,6 +33,15 @@ https://localhost:9443/
 ![portainer](/img/docker_portainer_p03.png) \
 ![portainer](/img/docker_portainer_p04.png) 
 
+# [Docker Swarm Install Install Portainer with Docker Swarm on Linux](https://docs.portainer.io/v/ce-2.9/start/install/server/swarm/linux)
+
+`docker swarm init` 
+
+    curl -L https://downloads.portainer.io/portainer-agent-stack.yml \
+        -o portainer-agent-stack.yml
+
+`docker stack deploy -c portainer-agent-stack.yml portainer`
+
 # REGISTRY KURULUM (PORTAINER ile)
 Şimdiye kadar hep hub.docker.com üzerinden image pull ve push işlemlerini yaptık. Docker Hub 1 tane private repository e izin vermektedir. Kurumumuza özel repository i bir noktada saklama ihtiyacını gidermek için registry kullanılabilir.
 
@@ -72,4 +81,4 @@ Container ların kaynak kullanımını anlık olarak gösterir.
 portainer üzerinden stats grafiksel olara bakılabilir. 
 
 ![portainer stats](/img/docker_portainer_stats_p01.png) \
-![portainer stats](/img/docker_portainer_stats_p02.png) \
+![portainer stats](/img/docker_portainer_stats_p02.png)

@@ -59,6 +59,8 @@ VXLAN - Virtual Extensible LAN :Bu ağ çeşidi kullanılarak IP katmanlarının
 
 VXLAN üzerinde oluşturulmuş olsa bile farklı ağlar üzerine eklenmiş olan containerları birbirlerini göremeyecek şekilde yapılandırmayıda desklediği gibi, yük dengelemek için DNS Round Robin veya IPVS (IP Virtual Server) desteklemesi, service discovery gibi teknolojileri desteklemesi ve docker üzerinde key-value storage olarak saklanması ayrıca bir kurulum gerektirmemesi gibi ek özellikleride barındırmaktadır.
 
+Bütün bu işlemler encrypted olur. [Encrypt traffic on an overlay network](https://docs.docker.com/network/overlay/#encrypt-traffic-on-an-overlay-network)
+
 | Command        | Description |
 | -------------- | ----------- |
 | `docker network ls`  | Varolan networkleri listeler. [docker network ls](https://docs.docker.com/engine/reference/commandline/network_ls/)<br>**NETWORK ID** : Kullanılan ağ arayüzünün kimliğini belirtir.<br> **NAME**: Ağ arayüzünün adı<br>**DRIVER**:Ağ arayüzünün hangi tipte olduğunu belirtir. *Varsayılan olarak **bridge** mod kullanılır. **host** ve **none** ile değiştirilebilir.*<br>**SCOPE**: local,globalve swarm değerini alır. Ağ arayüzünün seviyesini gösterir.<br>![ifconfig](img/docker_network_p2.png)|

@@ -1,5 +1,10 @@
 # [DOCKER SWARM](https://docs.docker.com/engine/reference/commandline/swarm/) - [Getting started with swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/)
+
+[Glossary - Docker Sözlük](https://docs.docker.com/glossary/)
+
 Swarm orchestration; docker hostların bir cluster (küme) halinde dağıtımının, yönetiminin ve ölçeklendirilmesinin sağlayan docker engine gömülü bir yapıdır. Yani docker engine yüklendiğinde swarm da kullanılabilir olarak sunuluyor.
+
+Birden fazla sunucuyu tek bir sunucu olarak yönetmemizi sağlıyan, bu yönetimi son derece kolaylaştıran ve güvenlik için işimizi kolaylaştıran özellikler ekleyen, çöken container ları otomatik olarak baştan başlatan, hatta sunucu (node) çökerse onun üzerindeki işleri başka sunucularda otomatik olarak başlatan ve daha birçok özelliği bünyesinde barındıran yönetim aracı diyebiliriz.
 
 Swarm içerisinde her bir docker host **node** olarak adlandırılır. Bu docker host lar sanal yada fiziksel yada cloud üzerinde bir makine olabilir.
 
@@ -20,6 +25,13 @@ Ayıca swarm üzerindeki makinelerin (node) haberleşmesi için gerekli **PORT**
 ![docker swarm ports](/img/swarm_diagram_p2.png)
 <hr>
 
+Container ların üzerinde çalıştığı sunucuların sağlık durumunu izleyerek (HEALTHCHECK) servis kesintisi yaşanması durumunda bunu swarm üyesi diğer node ler üzerinde servisleri ayağa kaldırarak kesinti yaşanmasını engellemektedir.
+
+Rolling Update özelliği sayesinde bir güncelleme olacağı zaman örneğin 10 tane ayakta olan bir service var ise bunların ikişer ikişer güncellenmesini, ve yeni çalışan sürümlerden sonra istediğimiz kadar süre (örneğin 10 dakika) beklemesi ve sağlıklı çalıştığından emin olunca devam etmesi, sağlıklı çalışmıyorsa eski sürüme otomatik olarak geri dönmesi gibi işlemleri kendisi otomarik olarak gerçekleştirebiliyor. Ayrıca Rollback özelliği sayesinde tamamen yeni sürüme geçmiş olsa ve her şey başarılı olsa bile istersek tek bir komutla sistemi eski hakine döndürebiliriz.
+
+
+Daha fazla bilgi için [Feature highlights](https://docs.docker.com/engine/swarm/#feature-highlights) linkinden yararlanabilirsiniz.
+
 ## 1. Manager Node (Yönetici):
 Yönetici node lar cluster durumunu kontrol ederek işçi node'leri yapılacak olan eylemlerle ilgili bilgilendirir. Merkezi yönetimi sağlar. Worker node yönetici nodlardan gelen görevleri işlerler. 
 
@@ -31,14 +43,17 @@ Yönetici node kullanıcı isteği doğrultusunda worker node olarak da çalış
 Worker node ler Manager Node üzerinden yönetilerek konteynerları çalıştırır. Üzerlerinde bir veya daha fazla container bulundurabilirler. 
 
 
-## Raft Consensus Algoritması
-- Availability sağlanabilmesi yani yüksek erişilebilirliğin sağlanabilmesi için swarm cluster içerisinde birden fazla manager node desteklenir. Manager Node ların herhangi birinde sorun olursa diğer manager node devreye girer ve swarm cluster çalışmaya ve service yönetimi sorunsuz bir şekilde devam eder.
+Manager ve Worker node ler tüm nodeler kendi aralarında Gossip protokolü ile iletişim kurarlar. Bu iletişim ile kendi içlerinde overlay ağları birbirleri ile paylaşırlar. Paylaşım şifreli olarak GCM modunda AES ile yapılır ve gossip verisini şifreleyen anahtar 12 saate bir otomatk olarak yenilenir. [Encrypt traffic on an overlay network](https://docs.docker.com/network/overlay/#encrypt-traffic-on-an-overlay-network)
+
+
+## [Raft Consensus Algoritması - Raft consensus in swarm mode](https://docs.docker.com/engine/swarm/raft/)
+- Hight Availability sağlanabilmesi yani yüksek erişilebilirliğin sağlanabilmesi için swarm cluster içerisinde birden fazla manager node desteklenir. Manager Node ların herhangi birinde sorun olursa diğer manager node devreye girer ve swarm cluster çalışmaya ve service yönetimi sorunsuz bir şekilde devam eder.
 - Swarm Cluster içerisinde Manager Node olarak işaretlenmiş sistemlerden sadece 1 tanesi lider olarak seçilir ve yönetim pasif Manager Node üzerinden değil Lider Manager node üzerinden yapılır. Pasif manager node üzerinde service yaratılmak istense dahi bu Lider manager node iletilir ve onun aracılığı ile işlem gerçekleşir.
 - Swarm cluster içerisinde birden fazla manager node olduğu durumda swarm Raft algoritması kullanarak lider seçimi yapılır. Kalan manager nodelar seçim yaparak aralarında lider manager node belirler.
 - Raft algoritması (N-1)/2 sayıda node devredışı kalmasını tölere eder.
 - Raft algoritmasının ile sorunsuz olarak lider seçiminin yapılabilmesi için tek sayıda (1,3,5,7,9...vb) gibi tek sayıda manager node kurulmuş olması gereklidir. 
 
-[The Raft Consensus Algorithm](https://raft.github.io/)
+[The Raft Consensus Algorithm](https://raft.github.io/)\
 [Distributed Consensus with Raft - CodeConf 2016](https://www.youtube.com/watch?v=RHDP_KCrjUc)
 
 
@@ -70,7 +85,10 @@ docker swarm declarative olarak çalışan bir uygulamadır ve herhangi bir şey
 |`docker swarm join-token worker`| komut **worker** node eklemek için gerekli komutun ne olduğu gösterir. Bu komutu eklemiş olduğumuz manager node üzerinde çalıştırıyoruz. [docker swarm join-token](https://docs.docker.com/engine/reference/commandline/swarm_join-token/) <br><br> ![docker swarm join-token](/img/docker_swarm_p7.png)|
 |`docker swarm join --token SWMTKN-1-26afrz41wobj22iyx7vhkwoeiy6q4z9m06hd759ycpcr4o9lqf-0yjoivazmtlbdx97mdakti2zo 192.168.0.24:2377`| Komut diğer node ler arasında da **worker** node olarak çalıştırılacak sistemler üzerinde bu kod çalıştırılır ve o node da worker node olarak işaretlenmiş olur. [docker swarm join](https://docs.docker.com/engine/reference/commandline/swarm_join/)<br><br>![docker swarm join](/img/docker_swarm_p4.png)|
 |`docker node ls`| docker swarm cluster kaç node oluştuğu ve hangilerinin manager olduğunu gösterir.[docker node ls](https://docs.docker.com/engine/reference/commandline/node_ls/)<br><br>![docker node ls](/img/docker_swarm_p8.png)|
+|`docker node ps devopsvm`| Belirtilen node üzerinde hangi işlemlerin gerçekleştiğini yönetici node üzerinde çalıştırarak elde edebiliriz. |
+|`docker node rm -f devopsvm`| Belirtilen node üzerinde hangi işlemlerin gerçekleştiğini yönetici node üzerinde çalıştırarak elde edebiliriz. |
 |`docker node inspect manager1`| docker swarm üzerindeki node ler hakkında bilgi alamk için kullanılır.. Bu komut manager node üzerinde çalıştırılmalıdır. [docker node promote](https://docs.docker.com/engine/reference/commandline/node_inspect/)|
+|`docker node inspect --pretty devopsvm`| docker swarm üzerindeki node ler hakkında bilgi alamk için kullanılır.. Bu komut manager node üzerinde çalıştırılmalıdır. --pretty daha güzel bir grünüm sağlar. [docker node promote](https://docs.docker.com/engine/reference/commandline/node_inspect/)|
 |`docker node demote manager1`| docker swarm manager node olarak tanımlanmış bir sistemi worker node olarak güncellenmesini sağlar.Bu komut manager node üzerinde çalıştırılmalıdır. [docker node demote](https://docs.docker.com/engine/reference/commandline/node_demote/)|
 |`docker node promote worker1`| docker swarm worker node olarak tanımlanmış bir sistemi manager node olarak güncellenmesini sağlar. Bu komut manager node üzerinde çalıştırılmalıdır. [docker node promote](https://docs.docker.com/engine/reference/commandline/node_promote/) ![](/img/docker_node_promote_p1.png)|
 |`docker node update --role manager worker1`| docker swarm worker node olarak tanımlanmış bir sistemi manager node olarak güncellenmesini sağlar. Bu komut manager node üzerinde çalıştırılmalıdır. [docker node update](https://docs.docker.com/engine/reference/commandline/node_update/) ![docker node update](/img/docker_node_p2.png)|
@@ -78,10 +96,12 @@ docker swarm declarative olarak çalışan bir uygulamadır ve herhangi bir şey
 |`docker service ls`| docker swarm modunda yaratılan service lerin listesini gösterir. [docker service ls](https://docs.docker.com/engine/reference/commandline/service_ls/)|
 |`docker service create --name test nginx`| Yeni bir service yaratmak için kullanılır. Swarm modda service engine modunda container a karşılık gelmektedir. [docker service create](https://docs.docker.com/engine/reference/commandline/service_create/)|
 |`docker service create --name web -p 80:80 --constraint "node.role==worker" --replicas=2 nginx`| Sadece worker node ler üzerinde yeni bir service yaratmak için kullanılır. [docker service create](https://docs.docker.com/engine/reference/commandline/service_create/) ![docker service create](/img/docker_swarm_p26.png) <br> docker-compose dosyasında örnek kullanımı [docker-compose-contraint.yml](/docker-compose/dockerstack/docker-compose-contraint.yml)|
+|`docker node update --label-add type=web devopsvm`| belirtilen node bir label vermek için kullanılır. |
+|`docker service create --name website -p 80:80 --constraint "node.labels.type==web" nginx`| label ismi olarak belirtilen node lere nginx kurulumunu gerçekleştirir. |
 |`docker service ps test`| Belirtilen service hangi nodlar üzerinde çalışıyor onlar görüntülenmektedir. [docker service ps](https://docs.docker.com/engine/reference/commandline/service_ps/)|
 |`docker service inspect test`| service hakkında detaylı bilgi gösterir.JSON formatında gösterir. Bu gösterim Desired state olarak adlandırılır ve Node ler üzerinde olması gerekenler üzerinde JSON dosyaları eşitlenene kadar işlemler yapılmaya devam ettirilir. [docker service inspect](https://docs.docker.com/engine/reference/commandline/service_inspect/)|
 |`docker service logs test`| Service altında oluşturulan containerların tamamının loglarının gösterilmesini sağlar. [docker service logs](https://docs.docker.com/engine/reference/commandline/service_logs/)|
-|`docker service scale test=3`| Önceden sadece 1 tane service varken şimdi 3 tane olarak değiştirdi. Scale in tersi içinde geçerlidir. 2 yada 1 e düşürülebilir. [docker service scale](https://docs.docker.com/engine/reference/commandline/service_scale/)|
+|`docker service scale test=3`| **ölçekleme** - Önceden sadece 1 tane service varken şimdi 3 tane olarak değiştirdi. Scale in tersi içinde geçerlidir. 2 yada 1 e düşürülebilir. [docker service scale](https://docs.docker.com/engine/reference/commandline/service_scale/)|
 |`docker service rm test`| Swarm modunda iken service silmek için kullanılır. [docker service rm](https://docs.docker.com/engine/reference/commandline/service_rm/)|
 |`docker service create --name gib --mode global nginx`| Global modda swarma dahil olan manager ve worker node lerın üzerinde istenilen image yi service olarak bütün node ler üzerinde çalıştırır. [ocker service create](https://docs.docker.com/engine/reference/commandline/service_create/)<br><br> ![Global mod](/img/docker_swarm_p13.png)|
 | `docker service create --name svcnginx --replicas=5 -p 8080:80 nginx`  | docker swarm cluster üzerindeki MANAGER NODE olarak işaretlenmiş lider node ye nginx imajından 5 tane ismi svcnginx olan worker nodeler üzerinde service yaratılması için kullanılır.[ocker service create](https://docs.docker.com/engine/reference/commandline/service_create/)<br>![docker swarm join](/img/docker_swarm_p9.png)|
@@ -129,7 +149,7 @@ esaydam/phpweb image si hazırlanarak hub.docker.com üzerindeki repository ypus
 | `docker service ls` <br><br> `docker service ps db` <br><br> `docker container ls` <br><br> `docker container exec -it 5c522ce6d056 bash` <br><br> `apt-get update && apt-get install -y iputils-ping dnsutils net-tools curl `<br><br>`ping web` <br><br> `dig web` <br><br>`nslookup web`<br><br>`wget -O- web\|more` | Aynı overlay network içerisindeki service lerin birbirleri arasındaki iletişim isim üzerinden yapılabilir. Yandaki komutların hepsi `db` service üzerinden çalıştırılmıştır. ![docker swarm](/img/docker_swarm_p16.png)<br>![docker swarm](/img/docker_swarm_p18.png)<br>![docker swarm](/img/docker_swarm_p19.png)<br>![docker swarm](/img/docker_swarm_p20.png)<br>![docker swarm](/img/docker_swarm_p21.png)|
 
 
-# DOCKER NETWORK LOAD BALANCER
+# DOCKER NETWORK LOAD BALANCER (ROUND ROBIN)
 | Command        | Description |
 | -------------- | ----------- |
 | `curl http://web`  | docker swarm içerisinde `db` service üzerinde çalıştırılan komut. Docker swarm üzerinde Replicas olarak 3 service olduğundan her istek farklı bir service üzerinden cevaplanacak şekilde docker swarm basit bir load balancer hizmetide sunmaktadır. ![docker network balancer](/img/docker_swarm_network_load_balancer_p1.png)<br>![docker network balancer](/img/docker_swarm_network_load_balancer_p2.png)<br>![docker network balancer](/img/docker_swarm_network_load_balancer_p3.png)|
@@ -157,6 +177,18 @@ Yukarıdaki komutlar çalıştırılıp hub.docker.com üzerindeki repositıry y
 # EXTRAS
 `sshpass -p "parola" scp -P 22 Dockerfile root@172.17.0.2:/ ` \
 scp ile ssh üzerinden dosya kopyalama. sshpass şifre sormasını istemediğimiz için pass geçmesini sağlamak adına komut satırından kullanımı.
+
+## DOCKER SWARM VISUALIZE
+[visualizer](https://hub.docker.com/r/dockersamples/visualizer)
+
+    docker service create \
+    --name=viz \
+    --publish=8080:8080/tcp \
+    --constraint=node.role==manager \
+    --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+    dockersamples/visualizer
+
+![docker_swarm_visualize](/img/docker_swarm_visualize_p01.png)
 
 ## ARAŞTIRMA KONUSU
 
