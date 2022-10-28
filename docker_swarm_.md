@@ -182,11 +182,11 @@ scp ile ssh üzerinden dosya kopyalama. sshpass şifre sormasını istemediğimi
 [visualizer](https://hub.docker.com/r/dockersamples/visualizer)
 
     docker service create \
-    --name=viz \
-    --publish=8080:8080/tcp \
-    --constraint=node.role==manager \
-    --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
-    dockersamples/visualizer
+        --name=viz \
+        --publish=8080:8080/tcp \
+        --constraint=node.role==manager \
+        --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+        dockersamples/visualizer
 
 ![docker_swarm_visualize](/img/docker_swarm_visualize_p01.png)
 

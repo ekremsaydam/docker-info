@@ -1,0 +1,11 @@
+.:53 {
+    forward . 192.168.200.135 8.8.8.8
+    log
+    errors
+}
+
+docker.internal {
+    file /root/db.docker.internal
+    log
+    errors
+}

@@ -1,0 +1,11 @@
+[http.middlewares.simpleAuth.basicAuth]
+  users = [
+    "admin:$apr1$66GBRxC6$P7t9jwf3vc2S8wPEWZ/u6/"
+  ]
+[http.routers.api]
+  rule = "Host(`host.docker.internal`)"
+  entrypoints = ["websecure"]
+  middlewares = ["simpleAuth"]
+  service = "api@internal"
+  [http.routers.api.tls]
+    certResolver = "lets-encrypt"
