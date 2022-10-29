@@ -4,6 +4,8 @@
 # https://doc.traefik.io/traefik/migration/v1-to-v2/
 # https://doc.traefik.io/traefik/middlewares/http/basicauth/
 
+# docker network create --opt encrypted --driver overlay --attachable traefiknet
+
 version: "3.8"
 
 services:
