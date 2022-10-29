@@ -3,6 +3,8 @@
 [Migration Guide: From v1 to v2](https://doc.traefik.io/traefik/migration/v1-to-v2/) \
 [BasicAuth](https://doc.traefik.io/traefik/middlewares/http/basicauth/) \
 [Docker-compose basic example](https://doc.traefik.io/traefik/user-guides/docker-compose/basic-example/) \
+[Let's Encrypt](https://doc.traefik.io/traefik/https/acme/)
+[Docker-compose with let's encrypt: TLS Challenge](https://doc.traefik.io/traefik/user-guides/docker-compose/acme-tls/)
 
 
 [Traefik Enterprise Installation Quick Start](https://doc.traefik.io/traefik-enterprise/getting-started/)
@@ -72,6 +74,23 @@ admin:$apr1$66GBRxC6$P7t9jwf3vc2S8wPEWZ/u6/
 [docker-compose.yml](/docker-compose/traefik/onswarm/traefik/docker-compose.yml)
 
 `docker network create --driver overlay traefiknet` 
+
+[CoreDNS Manual](https://coredns.io/manual/toc/#authoritative-serving-from-files) \
+`docker stack deploy -c docker-compose.yml coredns` \
+`docker stack ps coredns` \
+`docker logs coredns_coredns.1.l9y3byna2pjhqsp5g01mlz442` \
+![coredns](/img/docker_coredns_p01.png)
+
+`docker stack deploy -c docker-compose.yml traefik` \
+`docker stack ps traefik` \
+`docker stack services traefik` 
+
+
+# ÖRNEK 4 - Dışarıda HTTPS içerde HTTP
+
+[docker-compose.yml](/docker-compose/traefik/onswarm/traefik/https/docker-compose.yml)
+
+`docker network create --driver overlay traefik-net` \
 
 [CoreDNS Manual](https://coredns.io/manual/toc/#authoritative-serving-from-files) \
 `docker stack deploy -c docker-compose.yml coredns` \
