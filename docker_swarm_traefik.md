@@ -90,7 +90,7 @@ admin:$apr1$66GBRxC6$P7t9jwf3vc2S8wPEWZ/u6/
 
 [docker-compose.yml](/docker-compose/traefik/onswarm/traefik/https/docker-compose.yml)
 
-`docker network create --driver overlay traefik-net` \
+`docker network create --opt encrypted --driver overlay --attachable traefiknet` 
 
 [CoreDNS Manual](https://coredns.io/manual/toc/#authoritative-serving-from-files) \
 `docker stack deploy -c docker-compose.yml coredns` \
@@ -98,7 +98,7 @@ admin:$apr1$66GBRxC6$P7t9jwf3vc2S8wPEWZ/u6/
 `docker logs coredns_coredns.1.l9y3byna2pjhqsp5g01mlz442` \
 ![coredns](/img/docker_coredns_p01.png)
 
-`docker stack deploy -c docker-compose.yml traefik` \
+`docker stack deploy --compose-file docker-compose.yml traefik` \
 `docker stack ps traefik` \
 `docker stack services traefik` 
 

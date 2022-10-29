@@ -36,7 +36,7 @@ services:
       - --certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json
       # - --certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=websecure
 
-      - --providers.docker.network=traefik-net
+      - --providers.docker.network=traefiknet
       
       # - --providers.docker.defaultRule=Host(`{{ .Name }}.{{ index .Labels \"customLabel\"}}
       
@@ -54,7 +54,7 @@ services:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - traefik-net
+      - traefiknet
   
   whoami:
     image: traefik/whoami
@@ -75,10 +75,10 @@ services:
       - "traefik.tcp.routers.whoami-tcp.tls.passthrough=true"
       - "traefik.tcp.services.whoami-tcp.loadbalancer.server.port=443"
     networks:
-      - traefik-net
+      - traefiknet
 
 
 networks:
-  traefik-net:
+  traefiknet:
     external:
       true
