@@ -1,0 +1,38 @@
+# https://doc.traefik.io/traefik/providers/docker/
+# https://doc.traefik.io/traefik/routing/entrypoints/
+# https://doc.traefik.io/traefik/operations/dashboard/
+# https://doc.traefik.io/traefik/migration/v1-to-v2/
+# https://doc.traefik.io/traefik/middlewares/http/basicauth/
+# https://doc.traefik.io/traefik/https/acme/
+# https://doc.traefik.io/traefik/user-guides/docker-compose/acme-tls/
+
+version: "3.8"
+
+services:
+
+  visualizer:
+    image: dockersamples/visualizer
+    deploy:
+      replicas: 1
+    environment:
+      - HOST=visualizer.docker.internal
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.visualizer.entrypoints=websecure
+      # - traefik.http.routers.visualizer.rule="Host(`docker.internal`) || (Host(`docker.internal`) && Path(`/traefik`))"
+      - traefik.http.routers.visualizer.rule=Host(`visualizer.docker.internal`)
+      - traefik.http.routers.visualizer.tls=true
+      - traefik.http.routers.visualizer.tls.certresolver=myresolver
+      - traefik.http.services.visualizer.loadbalancer.server.port=8080
+      - traefik.http.routers.visualizer.middlewares=auth
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$RgkOrgtI$$5XDTS7phNS6XCyzP5AhL00" # openssl passwd -apr1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - traefiknet
+
+
+networks:
+  traefiknet:
+    external:
+      true

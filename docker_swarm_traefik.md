@@ -119,3 +119,6 @@ admin:$apr1$66GBRxC6$P7t9jwf3vc2S8wPEWZ/u6/
 `docker stack ps traefik` \
 `docker stack services traefik` 
 
+[docker-compose.yml](/docker-compose/traefik/onswarm/traefik/https-auth/visualizer/docker-compose.yml)
+
+`docker stack deploy -c docker-compose.yml visualizer`
