@@ -1,0 +1,96 @@
+# https://doc.traefik.io/traefik/providers/docker/
+# https://doc.traefik.io/traefik/routing/entrypoints/
+# https://doc.traefik.io/traefik/operations/dashboard/
+# https://doc.traefik.io/traefik/migration/v1-to-v2/
+# https://doc.traefik.io/traefik/middlewares/http/basicauth/
+# https://doc.traefik.io/traefik/https/acme/
+# https://doc.traefik.io/traefik/user-guides/docker-compose/acme-tls/
+
+version: "3.8"
+
+services:
+
+  traefik:
+    image: "traefik:v2.9"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    command:
+      #- "--log.level=DEBUG"
+      - --api.insecure=true
+      - --api.dashboard=true 
+      # - --providers.docker.endpoint=tcp://127.0.0.1:2375
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - --certificatesResolvers.myresolver.acme.email=admin@docker@internal
+      - --certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      # - --certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=websecure
+
+      - --providers.docker.network=traefiknet
+      
+      # - --providers.docker.defaultRule=Host(`{{ .Name }}.{{ index .Labels \"customLabel\"}}
+      
+      # TLS
+      # - --providers.docker.tls.ca=path/to/ca.crt
+      # - --providers.docker.tls.caOptional=true
+      # - --providers.docker.tls.cert=path/to/foo.cert
+      # - --providers.docker.tls.key=path/to/foo.key
+      # - --providers.docker.tls.insecureSkipVerify=true
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "8080:8080"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.entrypoints=websecure
+      # - traefik.http.routers.whoami.rule="Host(`docker.internal`) || (Host(`docker.internal`) && Path(`/traefik`))"
+      - traefik.http.routers.traefik.rule=Host(`traefik.docker.internal`)
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.certresolver=myresolver
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+      - "traefik.http.routers.traefik.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$RgkOrgtI$$5XDTS7phNS6XCyzP5AhL00" # openssl passwd -apr1
+    networks:
+      - traefiknet
+  
+  whoami:
+    image: traefik/whoami
+    deploy:
+      replicas: 3
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.entrypoints=websecure
+      # - traefik.http.routers.whoami.rule="Host(`docker.internal`) || (Host(`docker.internal`) && Path(`/traefik`))"
+      - traefik.http.routers.whoami.rule=Host(`whoami.docker.internal`)
+      - traefik.http.routers.whoami.tls=true
+      - traefik.http.routers.whoami.tls.certresolver=myresolver
+      - traefik.http.services.whoami.loadbalancer.server.port=80
+      - "traefik.http.routers.whoami.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$RgkOrgtI$$5XDTS7phNS6XCyzP5AhL00" # openssl passwd -apr1
+
+
+      - "traefik.tcp.routers.whoami-tcp.rule=HostSNI(`whoami.docker.internal`)"
+      - "traefik.tcp.routers.whoami-tcp.entrypoints=websecure"
+      - "traefik.tcp.routers.whoami-tcp.tls.passthrough=true"
+      - "traefik.tcp.services.whoami-tcp.loadbalancer.server.port=443"
+    networks:
+      - traefiknet
+
+
+networks:
+  traefiknet:
+    external:
+      true
