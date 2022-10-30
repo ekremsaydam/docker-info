@@ -146,3 +146,5 @@ yml dosyası üzerinde değişiklik yapılması gerekli olabilir. Örneğin netw
 `docker compose up -d`
 
 ![grafana](/img/docker_influxdb_grafana_p01.png)
+
+[Get started with Flux and InfluxDB](https://docs.influxdata.com/influxdb/v2.4/query-data/get-started/)
