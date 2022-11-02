@@ -1,0 +1,97 @@
+version: "3.8"
+
+services:
+  loki:
+    image: grafana/loki:2.6.0
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 200MB
+        reservations:
+          cpus: '0.01'
+          memory: 50MB
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - netmon
+
+  promtail:
+    image: grafana/promtail:2.6.0
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.01'
+          memory: 200MB
+        reservations:
+          cpus: '0.1'
+          memory: 50MB
+    volumes:
+      - /var/log:/var/log
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - netmon
+
+  grafana:
+    image: grafana/grafana:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 200MB
+        reservations:
+          cpus: '0.1'
+          memory: 50MB
+    # ports:
+    #   - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+
+      # HTTP
+      - "traefik.http.routers.http-grafana-router.priority=2"
+      - "traefik.http.routers.http-grafana-router.service=grafana"
+      - "traefik.http.routers.http-grafana-router.entrypoints=web" # bu satır kapalı iken bütün portları dinler.
+      - "traefik.http.routers.http-grafana-router.rule=Host(`grafana.docker.internal`)"
+      - "traefik.http.routers.http-grafana-router.middlewares=https-grafana-middlewares"
+
+      # HTTPS
+      - "traefik.http.routers.https-grafana-router.priority=1"
+      - "traefik.http.routers.https-grafana-router.service=grafana"
+      - "traefik.http.routers.https-grafana-router.entrypoints=websecure"
+      - "traefik.http.routers.https-grafana-router.rule=Host(`grafana.docker.internal`)"
+      - "traefik.http.routers.https-grafana-router.tls=true"
+      - "traefik.http.routers.https-grafana-router.tls.certresolver=myresolver"
+      - "traefik.http.routers.https-grafana-router.middlewares=https-grafana-middlewares"
+
+      # Traefik Chain
+      - "traefik.http.middlewares.https-grafana-middlewares.chain.middlewares=grafana-https-only"
+      - "traefik.http.middlewares.grafana-https-only.redirectscheme.scheme=https"
+
+    networks:
+      - traefiknet
+      - netmon
+
+volumes:
+  grafana-storage:
+
+networks:
+  traefiknet:
+    external: true
+  netmon:
+    external: true

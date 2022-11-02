@@ -1,0 +1,73 @@
+# docker stack deploy --compose-file docker-compose.yml traefik
+
+version: '3.8'
+
+services:
+  influxdb2:
+    image: influxdb:2.4.0
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500MB
+        reservations:
+          cpus: '0.1'
+          memory: 50MB
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+      - DOCKER_INFLUXDB_INIT_ORG=docker-internal
+      - DOCKER_INFLUXDB_INIT_BUCKET=docker
+    command: 
+      - --reporting-disabled
+    volumes:
+      # - $PWD/config.yml:/etc/influxdb2/config.yml
+      # - $PWD/influxdb2:/var/lib/influxdb2
+      - influxdb2-storage:/var/lib/influxdb2
+      - influxdb2-config:/etc/influxdb2
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # ports:
+    #   - 8086:8086
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.influxdb2.loadbalancer.server.port=8086
+
+      # HTTP
+      - "traefik.http.routers.http-influxdb2-router.priority=2"
+      - "traefik.http.routers.http-influxdb2-router.service=influxdb2"
+      - "traefik.http.routers.http-influxdb2-router.entrypoints=web" # bu satır kapalı iken bütün portları dinler.
+      - "traefik.http.routers.http-influxdb2-router.rule=Host(`influxdb2.docker.internal`)"
+      - "traefik.http.routers.http-influxdb2-router.middlewares=https-influxdb2-middlewares"
+
+      # HTTPS
+      - "traefik.http.routers.https-influxdb2-router.priority=1"
+      - "traefik.http.routers.https-influxdb2-router.service=influxdb2"
+      - "traefik.http.routers.https-influxdb2-router.entrypoints=websecure"
+      - "traefik.http.routers.https-influxdb2-router.rule=Host(`influxdb2.docker.internal`)"
+      - "traefik.http.routers.https-influxdb2-router.tls=true"
+      - "traefik.http.routers.https-influxdb2-router.tls.certresolver=myresolver"
+      - "traefik.http.routers.https-influxdb2-router.middlewares=https-influxdb2-middlewares"
+
+      # Traefik Chain
+      - "traefik.http.middlewares.https-influxdb2-middlewares.chain.middlewares=influxdb2-https-only"
+      - "traefik.http.middlewares.influxdb2-https-only.redirectscheme.scheme=https"
+
+    networks:
+      - traefiknet
+      - netmon
+
+volumes:
+  influxdb2-storage:
+  influxdb2-config:
+
+networks:
+  traefiknet:
+    external: true
+  netmon:
+    external: true
+    

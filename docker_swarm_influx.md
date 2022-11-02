@@ -1,7 +1,10 @@
 [Install InfluxDB](https://docs.influxdata.com/influxdb/v2.4/install/) \
+[InfluxDB](https://github.com/docker-library/docs/blob/master/influxdb/README.md)
+
 [telegraf](https://hub.docker.com/_/telegraf)
 
 [Grafana Installation](https://grafana.com/docs/loki/latest/installation/)
+
 
 
 # InfluxDB
@@ -18,7 +21,7 @@ Network haberleşmesi encrypted istenimiyorsa aşağıdaki gibi network yaratıl
 
     docker run \
     --rm influxdb:2.4.0 \
-    influxd print-config > config.yml
+    influxd print-config > influxdb.config.yml
 
 
 <br>
@@ -28,7 +31,7 @@ Network haberleşmesi encrypted istenimiyorsa aşağıdaki gibi network yaratıl
     docker run -d -p 8086:8086 \
     --name influxdb \
     --user $(id -u) \
-    --volume $PWD/config.yml:/etc/influxdb2/config.yml \
+    --volume $PWD/influxdb.config.yml:/etc/influxdb2/config.yml \
     --volume $PWD/influxdb2:/var/lib/influxdb2 \
     --volume /var/run/docker.sock:/var/run/docker.sock:ro \
     --net=netmon \
@@ -110,39 +113,38 @@ Telegraf sunucusunun düzgün çalışığ çalışmadığını log kontrolü il
     wget https://raw.githubusercontent.com/grafana/loki/v2.6.1/production/docker-compose.yaml -O docker-compose.yml
 
 yml dosyası üzerinde değişiklik yapılması gerekli olabilir. Örneğin network ayarlarında değişikliğe gitti iseniz lütfen docker-compose.yml dosyası içerisinde de değiştiriniz.
+<pre>
+version: "3"
 
-    version: "3"
+networks:
+  netmon:
+    external: true
 
+services:
+  loki:
+    image: grafana/loki:2.6.0
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
     networks:
-    netmon:
-        external:
-        true
+      - netmon
 
-    services:
-    loki:
-        image: grafana/loki:2.6.0
-        ports:
-        - "3100:3100"
-        command: -config.file=/etc/loki/local-config.yaml
-        networks:
-        - netmon
+  promtail:
+    image: grafana/promtail:2.6.0
+    volumes:
+      - /var/log:/var/log
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - netmon
 
-    promtail:
-        image: grafana/promtail:2.6.0
-        volumes:
-        - /var/log:/var/log
-        command: -config.file=/etc/promtail/config.yml
-        networks:
-        - netmon
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - netmon
 
-    grafana:
-        image: grafana/grafana:latest
-        ports:
-        - "3000:3000"
-        networks:
-        - netmon
-
-
+</pre>
 `docker compose up -d`
 
 ![grafana](/img/docker_influxdb_grafana_p01.png)

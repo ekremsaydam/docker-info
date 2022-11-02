@@ -1,0 +1,122 @@
+# docker network create --opt encrypted --driver overlay --attachable traefiknet
+# docker network create --driver overlay --attachable netmon
+
+version: "3.8"
+
+services:
+
+  traefik:
+    image: "traefik:v2.9"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 200MB
+        reservations:
+          cpus: '0.1'
+          memory: 50MB
+    command:
+      # LOG
+      # https://doc.traefik.io/traefik/observability/access-logs/
+      - --accesslog=true
+      - --accesslog.filepath=/logs/access.log
+      - --accesslog.format=json
+      - --accesslog.bufferingsize=100
+
+      # Metrics
+      # https://doc.traefik.io/traefik/observability/metrics/overview/
+      # - --metrics.influxdb2=true
+      # - --metrics.influxdb2.address=http://influxdb2:8086
+      # # https://docs.influxdata.com/influxdb/cloud/security/tokens/create-token/
+      # - --metrics.influxdb2.token=XpbaIo9ulS0F9IjucY2niX5ns8kxZqV61pL7Cdx-4KT4xsFO95wCZ9qOurXutk3WKlEo--r7Y3Ycccdfj7By-A==
+      # - --metrics.influxdb2.org=dockerinternal
+      # - --metrics.influxdb2.bucket=traefik
+      # - --metrics.influxdb2.addEntryPointsLabels=true
+
+      # FOR WEB
+      # - "--log.level=DEBUG"
+      - --api.insecure=true
+      - --api.dashboard=true 
+      # - --providers.docker.endpoint=tcp://127.0.0.1:2375
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+
+      - --entrypoints.web.address=:80
+      # - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      # - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - --certificatesResolvers.myresolver.acme.email=newsone@hotmail.com
+      - --certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      # - --certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=websecure
+
+      - --providers.docker.network=traefiknet
+      
+      # - --providers.docker.defaultRule=Host(`{{ .Name }}.{{ index .Labels \"customLabel\"}}
+      
+      # TLS
+      # - --providers.docker.tls.ca=path/to/ca.crt
+      # - --providers.docker.tls.caOptional=true
+      # - --providers.docker.tls.cert=path/to/foo.cert
+      # - --providers.docker.tls.key=path/to/foo.key
+      # - --providers.docker.tls.insecureSkipVerify=true
+    ports:
+      - 80:80
+      - 443:443
+      # - 8080:8080
+    volumes:
+      - "traefik-letsencrypt-storage:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+
+      # HTTP
+      - "traefik.http.routers.http-traefik-router.priority=2"
+      - "traefik.http.routers.http-traefik-router.service=api@internal"
+      - "traefik.http.routers.http-traefik-router.entrypoints=web" # bu satır kapalı iken bütün portları dinler.
+      - "traefik.http.routers.http-traefik-router.rule=Host(`traefik.docker.internal`)"
+      - "traefik.http.routers.http-traefik-router.middlewares=https-traefik-middlewares"
+
+      # HTTPS
+      - "traefik.http.routers.https-traefik-router.priority=1"
+      - "traefik.http.routers.https-traefik-router.service=api@internal"
+      - "traefik.http.routers.https-traefik-router.entrypoints=websecure"
+      - "traefik.http.routers.https-traefik-router.rule=Host(`traefik.docker.internal`)"
+      - "traefik.http.routers.https-traefik-router.tls=true"
+      - "traefik.http.routers.https-traefik-router.tls.certresolver=myresolver"
+      - "traefik.http.routers.https-traefik-router.middlewares=https-traefik-middlewares"
+
+      # Traefik Chain
+      # - "traefik.http.middlewares.traefik-middlewares.chain.middlewares=https-only,auth-users,known-ips"
+      - "traefik.http.middlewares.https-traefik-middlewares.chain.middlewares=traefik-https-only,traefik-auth-users"
+      # - "traefik.http.middlewares.http-only.redirectscheme.scheme=http"
+      - "traefik.http.middlewares.traefik-https-only.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.traefik-auth-users.basicauth.users=admin:$$apr1$$RgkOrgtI$$5XDTS7phNS6XCyzP5AhL00" # openssl passwd -apr1
+      # - "traefik.http.middlewares.known-ips.ipwhitelist.sourceRange=192.168.1.7,127.0.0.1/32"
+    networks:
+      - traefiknet
+      - netmon
+    # secrets:
+    #   - traefik-influxdb2-token
+
+volumes:
+  traefik-letsencrypt-storage:
+
+networks:
+  traefiknet:
+    external: true
+  netmon:
+    external: true
+
+# secrets:
+#   traefik-influxdb2-token:
+#     external: true
+
