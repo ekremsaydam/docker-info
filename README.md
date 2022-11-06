@@ -161,8 +161,16 @@ https://console.cloud.google.com/gcr/images/google-containers
 
 Bir yazılımın çalışması için gerekli tüm dosyaları, kodları, kütüphaneleri içeren paketlere`image` diyoruz.
 
+# Container Registries
+- Docker Hub
+- Self Hosted Registries
+- Third party Registries :
+Red Hat Quary, Amazon ECR, Azure Container Registry, Google Container Registry, JFrog Container Registry vb...
+
 
 Popüler olarak kullanılan birçok uygulamanın resmi imajları kendi üreticisi tarafından [Docker Hub](https://hub.docker.com/search?q=) üzerinde yayınlanmaktadır.
+
+Docker hub dışında
 
 
 | Command        | Description |

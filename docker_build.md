@@ -1,6 +1,15 @@
-# DOCKERFILE 
+# DOCKER IMAGE
+Docker image ler iki farklı şekilde oluşturulur.
+
+1. Dockerfile: 
+2. Interactive : Bir container dan image yaratılarak
+# 1. DOCKERFILE 
 [dockerfile](https://docs.docker.com/engine/reference/builder/) \
-İmajlar **dockerfile** adı verilen özel yapılar ile oluşturulur. Dockerfile Docker'a özgü bir betik dosyasıdır. imagenin tanımlamalarının yapıldığı dosyadır. Her satırda belli bir direktif (instruction) bulunmaktadır. Her direktif de image nin bir katmanını oluşturur. Her direktif kendisinden önceki katman üzerinde çalışır ve değişiklikler yeni bir katmanda tutulur. Kısacası kaç satırınız var ise o kadar katmanınız vardır diyebiliriz.
+İmajlar **dockerfile** adı verilen özel yapılar ile oluşturulur. 
+
+![Dockerfile](/img/Dockerfile_DockerImage_DockerContainer.png)
+
+Dockerfile Docker'a özgü bir betik dosyasıdır. imagenin tanımlamalarının yapıldığı dosyadır. Her satırda belli bir direktif (instruction) bulunmaktadır. Her direktif de image nin bir katmanını oluşturur. Her direktif kendisinden önceki katman üzerinde çalışır ve değişiklikler yeni bir katmanda tutulur. Kısacası kaç satırınız var ise o kadar katmanınız vardır diyebiliriz.
 
 `docker build` kullanılarak dockerfile içerisindeki talimatları yürüterek bir imaj oluşturur. [docker build](https://docs.docker.com/engine/reference/commandline/build/) | [docker image build](https://docs.docker.com/engine/reference/commandline/image_build/)
 
@@ -288,7 +297,7 @@ Host makine ve konteyner arasında dizin bağlama işlevini yerine getirir.
 `devopdocker container run -ti volubuntu`\
 ![docker build](/img/docker_build_p7.png)
 
-docker çalıştıran sunucu içerisindeki `/var/lib/docker/volumes` yolunda container çalıştırılırken oluşturulan volume id ile açılan klasör içerisinde container ile dosya paylaşmı yapılır.
+docker çalıştıran sunucu içerisindeki `/var/lib/docker/volumes` yolunda container çalıştırılırken oluşturulan volume id ile açılan klasör içerisinde container ile dosya paylaşmı yapılır. (docker ile ilgili bütün ayarlamalar -> /var/lib/docker altında bulunmaktadır.)
 
 ## [ONBUILD](https://docs.docker.com/engine/reference/builder/#onbuild)
 
@@ -515,8 +524,8 @@ ARG bilgisi girilmediği taktirde Dockerfile içerisindeki değer geçerli olaca
 > `docker container run -it esaydam/arrgusecase:latest bash`
 ![arg use case](/img/docker_dockerfile_arg_p3.png)
 
-
-# DOCKER CONTAINER COMMIT
+# 2. CONTAINER ÜZERİNDEN DOCKER IMAGE OLUŞTURMAK.
+## DOCKER CONTAINER COMMIT
 
 Bir container yaratılıp üzerinde işlemler yapıldıktan sonra bir image olarak kaydedilmesini sağlar.\
 `docker container run -it --name workcontainer ubuntu bash`

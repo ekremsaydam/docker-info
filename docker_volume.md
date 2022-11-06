@@ -21,6 +21,11 @@ Docker host üzerinde bu bölümler `/var/lib/docker/volumes/` path içerisinde 
 
 Docker host üzerinde yaratılan volume leri görüntülemek için `docker volume ls` komutu kullanılmaktadır.
 
+Volume çeşitler : 
+- Anonymous Volume
+- Named Volume
+- Bind Volume
+
 
 Yeni bir volume yaratılacak ise `docker volume create volume_ismi` komutundan yararlnabiliriz. [docker volume create](https://docs.docker.com/engine/reference/commandline/volume_create/) \
 ![docker volume create](/img/docker_volume_p3.png)

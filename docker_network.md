@@ -35,6 +35,8 @@ Bridge network driver kullanılarak farklı iki networkler oluşturulmuş olsun.
 ![docker network](/img/docker_network_p15.png) \
 
 ### **2. host**
+**Host network docker host üzerinde sadece bir tane bulunabilir.**
+
 ![docker network inspect host](/img/docker_network_p10.png) \
 host makinesinin ip ve port bilgileri container ile paylaşılır. \
 `docker run --rm --network host -ti centos bash` \
@@ -45,7 +47,10 @@ Docker host makinasının IP bilgileri :\
 ![](/img/docker_network_p12.png)
 
 ### **3. none**
-loopback olarak kullanılmasını sağlar. Bu durumda container diğer containerlar ve dış dünya ile iletişim kuramaz. \
+loopback olarak kullanılmasını sağlar. Bu durumda container diğer containerlar ve dış dünya ile iletişim kuramaz.
+
+**null driver ına ait docker host üzerinde yanlızca bir adet network yaratılabilir.**
+
 `docker run --rm --network none -ti centos bash` \
 `ip addr` \
 ![](/img/docker_network_p13.png)
