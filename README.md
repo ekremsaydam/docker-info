@@ -66,7 +66,7 @@ Docker kurulumuna sahip değilseniz aşağıdaki linkten docker üzerinde çalı
 ## NOT: Yukarıdaki gibi bir hata ile karşılaşmak istemiyorsanız docker kurulumunu mutlaka `sudo su` ile root kullanıcısına geçtiktan sonra kurulum komutlarını uygulayın.
 
 1. Eski sürümü kaldırmak için kullanılır.\
-`sudo su`\
+`sudo su` <br><br>
 `sudo apt-get remove docker docker-engine docker.io containerd runc`
 
 2. Apt paketlerini güncelleyiniz.\    
@@ -113,7 +113,9 @@ NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sür�
 `sudo apt-get install -y uidmap`
 
 12. Belirli bir kullanıcı ile docker çalıştırma için config yükleme\
-`dockerd-rootless-setuptool.sh install`
+`dockerd-rootless-setuptool.sh install`\
+`dockerd-rootless-setuptool.sh install -f`<br><br>
+`docker context use rootless`
 
 13. Güvenlik açısından root kullanıcısı yerine farklı bir kullanıcı ile docker kullanılması tercih edilmelidir. $USER ifadesi istenilen username ile değiştirilebilir. \
 `sudo usermod -aG docker $USER`
@@ -131,24 +133,33 @@ NOT: `apt-cache madison docker-ce` komutu ile Docker Engine'in belirli bir sür�
 `sudo snap install docker`\
 `sudo apt-get install -y uidmap`\
 `dockerd-rootless-setuptool.sh install`
+<hr>
 
-*NOT: alternatif install [Install using the convenience script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)*
-`sudo snap install curl`\
+*18 - python pip aracılığı ile docker-compose yüklemesi.* \
+`sudo apt-get install python3-pip -y` \
+TODO
+<hr>
+
+*NOT: alternatif install [Install using the convenience script](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)* \
+`sudo apt-get install curl`\
 `curl -fsSL https://get.docker.com -o get-docker.sh`\
-`DRY_RUN=1 sh ./get-docker.sh`\
-`sudo sh get-docker.sh`\
+`DRY_RUN=1 sudo sh ./get-docker.sh`
+
+[Run the Docker daemon as a non-root user (Rootless mode)](https://docs.docker.com/engine/security/rootless/)\
+`sudo apt-get install -y dbus-user-session` \
 `sudo apt-get install -y uidmap`\
-`dockerd-rootless-setuptool.sh install --force`\
+`sudo systemctl disable --now docker.service docker.socket` \
+`dockerd-rootless-setuptool.sh install` -> dockerd-rootless-setuptool.sh install --force
+
+`sudo apt-get install -y docker-ce-rootless-extras` \
+`reboot`
+<hr>
+
+VirtualBox yüklenmesi için \
 `sudo apt-get update`\
 `sudo apt-get install virtualbox`\
 `sudo snap install docker`
 `sudo apt-get install virtualbox—ext–pack`
-
-*18 - python pip aracılığı ile docker-compose yüklemesi. \
-`sudo apt-get install python3-pip -y` \
-
-*
-
 <hr>
 
 # DOCKER IMAGE

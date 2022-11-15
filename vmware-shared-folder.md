@@ -1,3 +1,5 @@
+[How to configure VMware Tools Shared Folders Linux mounts (60262)](https://kb.vmware.com/s/article/60262)
+
 `sudo apt-get -y install open-vm-tools-desktop` \
 `vmtoolsd --version` \
 `ps aux | grep "vmtoolsd"` \
