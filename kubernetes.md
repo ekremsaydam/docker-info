@@ -144,6 +144,12 @@ $ sudo systemctl status docker
 
 ## 2.3.2. Setting up cri-dockerd on Docker for Kubernetes
 [cri-dockerd](https://github.com/Mirantis/cri-dockerd)
+
+added kubernetes.internal
+```
+$ sudo vi /etc/hosts
+```
+
 ```
 $ systemctl status docker
 $ sudo apt-get update
@@ -175,12 +181,7 @@ $ sudo kubeadm init \
   --pod-network-cidr=10.200.0.0/16 \
   --cri-socket=unix:///run/cri-dockerd.sock \
   --upload-certs \
-  --control-plane-endpoint=kubernetes.local
-```
-
-added kubernetes.local
-```
-$ sudo vi /etc/hosts
+  --control-plane-endpoint=kubernetes.internal
 ```
 
 Kurulum düzgün bir şekilde tamamlandığında worker ve master node olabilmesi için makinenin gerekli token bilgisi görüntülenecektir.

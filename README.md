@@ -1,44 +1,61 @@
 # INSTALATION ON LINUX
+[OpenSSH Server](https://ubuntu.com/server/docs/service-openssh)
 ## 1. SSH Instalation on Ubuntu
->`sudo apt-get update`\
->`sudo apt list --upgradable`\
->`sudo apt-get upgrade`\
->`sudo apt-get dist-upgrade`\
->`sudo apt install openssh-server`\
->`sudo systemctl status ssh`\
+```
+$ sudo apt-get update
+$ sudo apt list --upgradable
+$ sudo apt-get upgrade
+$ sudo apt-get autoremove
+$ sudo apt-get dist-upgrade
+$ sudo apt install -y openssh-server
+$ sudo systemctl status ssh
+```
 ![systemctl status ssh komutu sonrasındaki görüntü](/img/docker_install_p1.png)
 
->`sudo ufw status`\
->`sudo ufw enable`\
->`sudo ufw allow ssh`\
+```
+$ sudo ufw status
+$ sudo ufw enable
+$ sudo ufw allow ssh
+$ sudo ufw status
+```
 ![sudo ufw allow ssh komutu sonrasındaki görüntü](/img/docker_install_p2.png)
 
->`sudo ufw status`\
 ![sudo ufw allow ssh komutu sonrasındaki görüntü](/img/docker_install_p6.png)
 
-> `ip address`\
-![sudo ufw allow ssh komutu sonrasındaki görüntü](/img/docker_install_p7.png)
+Aşağıdaki kod ile public ve private key oluşturulurken verilen passphrase  unutulmamalıdır. \
+passphrase boş geçilebilir.
 
-> `ssh devops@192.168.100.10` # ssh devops@localhost\
-![sudo ufw allow ssh komutu sonrasındaki görüntü](/img/docker_install_p9.png)\
-> > `exit`
+``` 
+C:\> ssh-keygen -t rsa -b 4096
+C:\> cd %userprofile%/.ssh/
+C:\Users\<user_name>/.ssh/> scp id_rsa.pub devops@192.168.200.135:/home/devops
+```
 
-> `reboot`
+```
+$ mkdir .ssh
+$ cat id_rsa.pub >> .ssh/authorized_keys
+```
 
->`do-release-upgrade`\
-![do-release-upgrade komutu sonrasındaki görüntü](/img/docker_install_p4.png)
+Aşağıdaki kod ile giriş yapılırken sorulan "Enter passphrase for key" \
+olarak girilen değerdir. Eğer bir değer girilmedi ise passphrase sorulmaz.
+```
+C:\> ssh devops@192.168.200.135
+C:\> ssh -i id_rsa devops@192.168.200.135
+```
 
-> `sudo systemctl stop ssh`
+```
+$ sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.original
+$ sudo chmod a-w /etc/ssh/sshd_config.original
 
-> `sudo systemctl start ssh`
+$ sudo vi /etc/ssh/sshd_config
+PasswordAuthentication no
 
-> `sudo systemctl enable ssh` # sudo systemctl disable ssh
+# Configurasyonu test etmek için kullanılır.
+$ sudo sshd -t -f /etc/ssh/sshd_config
 
-![systemctl komutu sonrasındaki görüntü](/img/docker_install_p5.png)
-
->`sudo apt list --upgradable`\
->`sudo apt-get upgrade`\
->`sudo apt-get dist-upgrade`
+# sshd_config dosyasında yapılan değişiklikleri uygulamak için
+$ sudo systemctl restart sshd.service
+```
 ## 2. WHAT IS DOCKER
 Docker Container tanıtım videosu
 [The future of Linux Containers](https://www.youtube.com/watch?v=wW9CAH9nSLs)
