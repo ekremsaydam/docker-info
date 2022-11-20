@@ -245,6 +245,16 @@ $ sudo systemctl status containerd
 
 ## 2.4.1 kubernetes cluster setup for containerd
 
+Eğer Docker kurulu ise sadece
+```
+$ sudo cp /etc/containerd/config.toml /etc/containerd/config-with-docker.toml
+$ sudo rm /etc/containerd/config.toml
+$ sudo containerd config default | sudo tee /etc/containerd/config.toml
+$ sudo sed -i 's/            SystemdCgroup = false/            SystemdCgroup = true/' /etc/containerd/config.toml
+$ sudo systemctl restart containerd
+```
+komutları çalıştırılır. Aşağıdaki komutlar docker kurulu olmadığında containerd üzerinden kurulum işlemi yapılandırılabilir.
+
 init komutunun farklı çalışması 
 `$ sudo kubeadm init --pod-network-cidr=192.168.10.0/24`
 ```
@@ -294,12 +304,18 @@ Kontrol amaçlı aşağıdaki komutlar denenebilir.
 $ ip addr
 $ telnet <ip> 6443
 ```
-Eğer telnet bağlantısı başarısız olursa firewall etkinleştirilerek 6443 portuna izin verilir.
+Eğer telnet bağlantısı başarısız olursa firewall etkinleştirilerek 6443 portuna izin verilir. \
+[Kubernetes Ports and Protocols](https://kubernetes.io/docs/reference/ports-and-protocols/)
 ```
 $ sudo ufw status verbose
 $ sudo ufw disable
 $ sudo ufw enable
+
+# master node üzerinde 6443 portu açılır.
 $ sudo ufw allow 6443/tcp
+
+# worker node üzerinde 10250 portu açılır.
+$ sudo ufw allow 10250/tcp
 $ telnet <ip> 6443
 ```
 
@@ -340,11 +356,12 @@ $ kubectl get nodes -o wide
 
 Master node üzerinde aşağıdaki kodlar çalıştırılır.
 ```
-$ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/tigera-operator.yaml
-$ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/custom-resources.yaml
+$ curl https://docs.projectcalico.org/manifests/calico.yaml -O
+$ sed -i 's/192.168.0.0/10.244.0.0/g' calico.yaml
+$ kubectl apply -f calico.yaml
+$ kubectl get pods --all-namespaces
+$ kubeadm token create --print-join-command
 ```
-
-
 <hr>
 
 [Running kubeadm without an Internet connection](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/#without-internet-connection)
@@ -467,3 +484,21 @@ $ kubectl get nodes
 | -------------- | ----------- |
 | `minikube stop` | minikube cluster yapısını silmeden durdurmak için kullanılır. `docker container ls` minikube container inin durdurulduğu görüntülenir. |
 | `minikube delete` | minikube cluster yapısını siler. |
+
+
+# 4. Secure the Cluster with Kubescape by ARMO
+[kubescape](https://github.com/kubescape/kubescape)
+```
+$ curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+$ kubescape version
+$ kubescape scan framework nsa
+$ kubescape scan framework mitre
+$ kubescape scan framework nsa –exclude-namespaces kube-system,kube-public
+$ kubescape scan framework nsa –include-namespaces development,staging,production
+$ kubescape scan framework nsa *.yaml
+$ kubescape scan framework nsa –verbose
+$ kubescape scan framework nsa –format json –output results.json
+
+
+$ kubescape scan --enable-host-scan  --verbose
+```
