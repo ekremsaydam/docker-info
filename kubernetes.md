@@ -247,8 +247,7 @@ $ sudo systemctl status containerd
 
 Eğer Docker kurulu ise sadece
 ```
-$ sudo cp /etc/containerd/config.toml /etc/containerd/config-with-docker.toml
-$ sudo rm /etc/containerd/config.toml
+$ sudo mv /etc/containerd/config.toml /etc/containerd/config-with-docker.toml
 $ sudo containerd config default | sudo tee /etc/containerd/config.toml
 $ sudo sed -i 's/            SystemdCgroup = false/            SystemdCgroup = true/' /etc/containerd/config.toml
 $ sudo systemctl restart containerd
@@ -257,16 +256,18 @@ komutları çalıştırılır. Aşağıdaki komutlar docker kurulu olmadığınd
 
 init komutunun farklı çalışması 
 `$ sudo kubeadm init --pod-network-cidr=192.168.10.0/24`
+
+Benim tercihim:
 ```
 $ ip addr
 $ sudo kubeadm init \
 --apiserver-advertise-address=192.168.200.136 \
 --control-plane-endpoint=192.168.200.136 \
 --service-cidr=10.96.0.0/12 \
---pod-network-cidr=10.244.0.0/16
+--pod-network-cidr=10.244.0.0/16 \
+--upload-certs
 ```
 veya \
-Benim tercihim
 ```
 sudo kubeadm init \
   --service-cidr=10.99.0.0/16 \
@@ -283,6 +284,7 @@ $ sudo sed -i 's/            SystemdCgroup = false/            SystemdCgroup = t
 $ sudo systemctl restart containerd
 ```
 **Komutlar sonrasında tekrar kubeadm init çalıştırılmalıdır.**
+
 ## 2.5. make sure the installation is working
 ```
 $ mkdir -p $HOME/.kube
@@ -324,6 +326,11 @@ $ telnet <ip> 6443
 Eğer worker token unutuldu ise aşağıdaki komut ile worker join token görüntülenebilir.
 ```
 kubeadm token create --print-join-command
+```
+
+Node sonradan eklenirse isim vermek için aşağıdaki komut kullanılabilir.
+```
+kubectl label nodes worker1 node-role.kubernetes.io/worker=worker
 ```
 ## 2.6 Cluster Ready
 [Deploying flannel manually](https://github.com/flannel-io/flannel#deploying-flannel-manually)
