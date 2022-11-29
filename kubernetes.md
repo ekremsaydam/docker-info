@@ -388,6 +388,15 @@ $ mkdir -p $HOME/.kube
 $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
+
+## REMOTE CONNECTION KUBERNETES
+```
+$ scp -r devops@192.168.200.139:/home/devops/.kube .`
+$ cp -r .kube $HOME/
+$ kubectl get nodes
+```
+
+
 [Play with Kubernetes](https://labs.play-with-k8s.com/)
 # 3. MINIKUBE INSTALATION
 [minikube Instalation](https://minikube.sigs.k8s.io/docs/start/)
