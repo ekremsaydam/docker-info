@@ -391,7 +391,7 @@ $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ## REMOTE CONNECTION KUBERNETES
 ```
-$ scp -r devops@192.168.200.139:/home/devops/.kube .`
+$ scp -r devops@192.168.200.139:/home/devops/.kube .
 $ cp -r .kube $HOME/
 $ kubectl get nodes
 ```
