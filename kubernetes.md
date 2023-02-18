@@ -48,7 +48,7 @@ kubectl version --client --output=yaml && kubeadm version --output=yaml
 
 ```
 kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
-``` 
+```
 
 veya
 benim tercihim
@@ -136,7 +136,7 @@ $ sudo apt-get install -y uidmap
 $ dockerd-rootless-setuptool.sh install
 $ docker context use rootless
 $ sudo usermod -aG docker $USER
-$ sudo systemctl daemon-reload 
+$ sudo systemctl daemon-reload
 $ sudo systemctl restart docker
 $ sudo systemctl enable docker
 $ sudo systemctl status docker
@@ -254,7 +254,7 @@ $ sudo systemctl restart containerd
 ```
 komutları çalıştırılır. Aşağıdaki komutlar docker kurulu olmadığında containerd üzerinden kurulum işlemi yapılandırılabilir.
 
-init komutunun farklı çalışması 
+init komutunun farklı çalışması
 `$ sudo kubeadm init --pod-network-cidr=192.168.10.0/24`
 
 Benim tercihim:
@@ -413,7 +413,7 @@ docker pull gcr.io/k8s-minikube/kicbase:v0.0.36
 ```
 ```
 docker pull gcr.io/k8s-minikube/kicbase@sha256:8debc1b6a335075c5f99bfbf131b4f5566f68c6500dc5991817832e55fcc9456
-``` 
+```
 ```
 minikube start
 ```
@@ -437,7 +437,7 @@ docker pull gcr.io/k8s-minikube/kicbase@sha256:8debc1b6a335075c5f99bfbf131b4f556
 ![HATA](/img/docker_minikube_p02_error.png) \
 Yukarıdaki gibi bir hata alınırsa aşağıdaki komutlar uygulanır. \
 [Enabling CPU, CPUSET, and I/O delegation
-](https://rootlesscontaine.rs/getting-started/common/cgroup2/#enabling-cpu-cpuset-and-io-delegation) 
+](https://rootlesscontaine.rs/getting-started/common/cgroup2/#enabling-cpu-cpuset-and-io-delegation)
 
 ```
 cat /sys/fs/cgroup/user.slice/user-$(id -u).slice/user@$(id -u).service/cgroup.controllers
@@ -518,3 +518,55 @@ $ kubescape scan framework nsa –format json –output results.json
 
 $ kubescape scan --enable-host-scan  --verbose
 ```
+
+# 5. Kubernetes kubectl Command
+
+| Command        | Description |
+| -------------- | ----------- |
+| `kubectl config get-contexts` | $HOME\\.kube dosyası içerisinde kayıtlı contexts bilgisini verir. |
+| `kubectl config current-context` | Üzerinde çalışılacak context bilgisini verir. |
+| `kubectl config use-context kubernetes-admin@kubernetes` | kubernetes-admin@kubernetes olarak belirtilen context seçilerek bu satırdan sonra yazılacak komutların bu cluster üzerinde çalışması sağlanacaktır. |
+| `kubectl cluster-info` | Üzerinde işlem yapılan cluster ile ilgili bilgi edinmek için kullanılan komuttur. |
+| `kubectl cp --help` | Bir komut hakkında yardım almak için --help komut argümanından yararlanılabilir. |
+| `kubectl delete pods varolanpod` | kubectl komutu sonrasında bir fiil gelerek yapılmak istenen aktarılır. Sonrasında hangi object tipi üzerinde işlem yapılacaksa belirtilir. Sonrasında da objenin ismi yazılarak komut çalıştırılabilir. |
+| `kubectl get pods -n kube-system` | `kubectl get pods` varsayılan olarak default namespace üzerinde çalışır. Ancak biz istediğimiz namespace üzerinde bu komutu çalıştırmak istersek `-n` parametresinden yararlanarak sonrasında namespace ismini girdiğimizde istediğimiz namespace üzerinde bu komut uygulanmış olacaktır.|
+| `kubectl get pods -A` <br><br> `kubectl get pods --all-namespaces` | Bütün namespacelerde bulunan pods ları listeler.|
+| `kubectl get pods -A --output wide` | Ekran çıktısını farklı formatlarda görüntüleyebiliriz.|
+| `kubectl get pods -A -o json` | Ekran çıktısını farklı formatlarda görüntüleyebiliriz.|
+| `kubectl get pods -A -o yaml` | Ekran çıktısını farklı formatlarda görüntüleyebiliriz.|
+| `kubectl get pods -A -o name` | Ekran çıktısını farklı formatlarda görüntüleyebiliriz.|
+| `kubectl get pods -A -o json \| jq -r ".items[].spec.containers[].name"` | jq aracılığı ile istediğimiz path bilgisi seçilerek ekranda gösterilebilir.|
+| `kubectl explain pod` | pod objesi ile ilgili bilgi verir. |
+| `kubectl explain deployment` | deployment objesi ile ilgili bilgi verir. |
+
+## a. imperative
+
+| Command        | Description |
+| -------------- | ----------- |
+| `kubectl run firstpod --image=nginx --restart` | Yeni bir pod oluşturmak ve çalıştırmak için kullanılır. |
+| `kubectl get pods -o wide` | daha önce oluşturulan pods ları listelemek için kullanılır. |
+| `kubectl describe pods firstpod` | belirtilen `firstpod` ismindeki pod hakkında detaylı bilgi verir.|
+| `kubectl logs firstpod` | belirtilen firstpod un oluşturduğu logları görüntülemek için kullanılır.|
+| `kubectl logs -f firstpod` | logları anlık olarak izlemek için kullanılır.|
+| `kubectl exec firstpod -- ls /` | belirtilen pod içerisinde komut çalıştırmak için kullanılır.|
+| `kubectl exec -it firstpod -- /bin/sh` | Varolan firstpod a bir shell bağlantısı yapmak için kullanılır.|
+| `kubectl delete pods firstpod` | firstpod isimli pod silmek için kullanılır. |
+
+## b. declarative
+
+YAML - Yet Another Markup Language
+Kaynaklar
+- https://www.youtube.com/watch?v=8sDzDpywFvY
+- https://yaml.org/
+- https://www.w3schools.io/file/yaml-cheatsheet-syntax/
+
+### pod Annotation
+
+YML yapısı
+```
+apiVersion:
+kind:
+metadata:
+spec:
+```
+

@@ -1,0 +1,7 @@
+{
+    "yaml.schemas": {
+        "kubernetes": "*.yml",
+        "http://json.schemastore.org/appveyor": "appveyor.yml",
+        "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.22.4-standalone-strict/all.json": "file:///d%3A/x_Working/github/docker/kubernetes-yaml/test.yml"
+    }
+}
