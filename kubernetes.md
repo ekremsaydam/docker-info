@@ -551,6 +551,8 @@ $ kubescape scan --enable-host-scan  --verbose
 | `kubectl exec firstpod -- ls /` | belirtilen pod içerisinde komut çalıştırmak için kullanılır.|
 | `kubectl exec -it firstpod -- /bin/sh` | Varolan firstpod a bir shell bağlantısı yapmak için kullanılır.|
 | `kubectl delete pods firstpod` | firstpod isimli pod silmek için kullanılır. |
+| ```kubectl run secondpod --image=nginx --port=80 --labels="app=frontend" --restart=Never``` | imperative yöntem ile bir pod oluşturmak. |
+| ```kubectl run secondpod --image=nginx --port=80 --labels="app=frontend,team=developer" --restart=Never``` | varolan pod a eklemeye kalktığımızda `Error from server (AlreadyExists): pods "secondpod" already exists` hatası alınacaktır. Varolan pod üzerinde değişiklik yapılmaz. Varolan pod silinerek tekrar istendik ayarlarla yaratılabilir. |
 
 ## b. declarative
 
@@ -569,4 +571,13 @@ kind:
 metadata:
 spec:
 ```
+
+| Command        | Description |
+| -------------- | ----------- |
+| `kubectl apply --filename podexample.yml` | Yeni bir pod oluşturmak ve çalıştırmak için kullanılır. |
+| `kubectl get pods` | Yaratılan pods ile ilgili bilgi verir. |
+| `kubectl describe pods podexample` | podexample olarak yaratılan pod ile ilgili detaylı tanımlama bilgisini gösterir. |
+| `kubectl apply --filename podexample.yml` | podexample.yml içerisinde bir değişiklik yapılarak tekrar apply komutu ile çalıştırıldığında daha önce yaratılmış pods üzerinde değişiklik yapılarak yeni ayarlamalar varolan pods üstüne uygulanacaktır. |
+| `kubectl edit pods podexample` | podexample isimli önceden oluştrulmuş objenin mevcut halini çeker ve sistemde varsayılan olarak tanımlanmış text editörü ile açar. |
+
 
