@@ -582,3 +582,39 @@ spec:
 | `kubectl edit pods podexample` | podexample isimli önceden oluştrulmuş objenin mevcut halini çeker ve sistemde varsayılan olarak tanımlanmış text editörü ile açar. |
 
 
+[Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/)
+![](/img/kubernetes_components.svg)
+
+[Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
+
+[Pod phase](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-phase)
+|
+[Understanding Pod status](https://kubernetes.io/docs/tasks/debug/debug-application/debug-init-containers/#understanding-pod-status)
+
+```
+Pending
+ContainerCreating
+ErrImagePull
+ImagePullBackOff
+Running
+Completed
+Error
+CrashLoopBackOff
+Terminating
+```
+
+[Container restart policy](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy)
+```
+Always
+OnFailure
+Never
+```
+| Command        | Description |
+| -------------- | ----------- |
+| `kubectl get pods -w` | watch mode olarak podları izler. |
+| `kubectl apply -f pod_status_imageerror.yml` | yml üzerinden pod objesi oluşturma. |
+| `kubectl delete -f pod_status_imageerror.yml` | [pod_status_imageerror.yml](/kubernetes-yaml/pod_status_imageerror.yml) üzerinden oluşturulmuş pod nesnesini silmek. <br> ![](/img/kubernetes_podlife_status_ErrImagePull_ImagePullBackOff.png) |
+| `kubectl apply -f pod_status_succeeded.yml` | [pod_status_succeeded.yml](/kubernetes-yaml/pod_status_succeeded.yml) üzerinden pod nesnesi yaratmak <br> ![](/img/kubernetes_podlife_status_Running_Completed.png) |
+| `kubectl apply -f pod_status_failcontainer.yml` | [pod_status_failcontainer.yml](/kubernetes-yaml/pod_status_failcontainer.yml) pod nesnesi yaratmak. <br> ![](/img/kubernetes_podlife_status_Error.png) |
+| `kubectl apply -f pod_status_crashloopback.yml` | [pod_status_crashloopback.yml](/kubernetes-yaml/pod_status_crashloopback.yml) pod nesnesi yaratmak. <br> ![](/img/kubernetes_podlife_status_CrashLoopBackOff.png) |
+
