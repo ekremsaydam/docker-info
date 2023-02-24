@@ -1,10 +1,17 @@
 apiVersion: v1
-kind: Pod
-metadata:
-  name: podsexample
+# kubectl explain pods
+# kubectl explain deployment
+# kubectl explain services
+# kubectl explain serviceaccount
+# apiVersion için yaratılacak pods, deployment ve serviceaccount ile ilgili
+# version bilgilerini explain ile öğrenebiliriz.
+kind: Pod # oluşturulmak istenen objenin ne olduğunun bilgisi kind ile belirtilir.
+metadata: # metadata altında oluşturulan objenin temel bilgilerinin (betimlenmesi) tanımlanması yapılır. dictionary veri tipi olarak tanımlanır.
+  name: podexample
   labels:
-    app: front-end
-spec:
+    app: front-end # anahtarı app değeri ise front-end isimlendirmesi yapılır.
+    team: developer
+spec: # objeyi oluşturacak özelliler belirtilir. Objeye göre değişir. container,service... ve onlarla ilgili bilgileri içerir.
   containers:
     - name: nginx
       image: nginx:latest
