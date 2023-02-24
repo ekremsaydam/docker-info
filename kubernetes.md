@@ -571,6 +571,7 @@ kind:
 metadata:
 spec:
 ```
+[podexample.yml](/kubernetes-yaml/podexample.yml)
 
 | Command        | Description |
 | -------------- | ----------- |
