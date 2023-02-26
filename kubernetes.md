@@ -581,6 +581,7 @@ spec:
 | `kubectl apply --filename podexample.yml` | podexample.yml içerisinde bir değişiklik yapılarak tekrar apply komutu ile çalıştırıldığında daha önce yaratılmış pods üzerinde değişiklik yapılarak yeni ayarlamalar varolan pods üstüne uygulanacaktır. |
 | `kubectl edit pods podexample` | podexample isimli önceden oluştrulmuş objenin mevcut halini çeker ve sistemde varsayılan olarak tanımlanmış text editörü ile açar. |
 
+## POD Life
 
 [Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/)
 ![](/img/kubernetes_components.svg)
@@ -618,3 +619,60 @@ Never
 | `kubectl apply -f pod_status_failcontainer.yml` | [pod_status_failcontainer.yml](/kubernetes-yaml/pod_status_failcontainer.yml) pod nesnesi yaratmak. <br> ![](/img/kubernetes_podlife_status_Error.png) |
 | `kubectl apply -f pod_status_crashloopback.yml` | [pod_status_crashloopback.yml](/kubernetes-yaml/pod_status_crashloopback.yml) pod nesnesi yaratmak. <br> ![](/img/kubernetes_podlife_status_CrashLoopBackOff.png) |
 
+NOT: Tek bir pod içerisinde farklı containerlar ile çalışan sistemler birbirleri ile haberleşebilirler. Bir pod içerisinde zorunlu olmadıkça (birbirleri ile bağımlılıkları yok ise log sunucuları web sunucularına bağımlı olabilir.) bir container tanımlaması yapılmalıdır. Farklı pod üzerinden çalışan containerlar birbirleri ile izole olarak çalışırlar. Tek bir pod üzerinden birden fazla container çalışıyorsa aynı volume üzerinde çalışabilir ve birbirleri ile network düzeyinde iletişime geçebilirler.
+
+NOT: Bir container içerisinden birden fazla uygulama çalıştırılmamalıdır. Bunun nedeni scale edilirken sorun yaşanmasıdır.
+
+Örnek olarak wordpress ve mysql aynı container içerisinde yaratılır ve frontend tarafından hizmet veren wordpress scale edilmeye çalışılırsa mysql ile beraber scale edileceğinden dolayı sorun yaşanacaktır.
+
+## [Pod lifetime](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-lifetime)
+
+![Pod lifetime](/img/kubernetes_podlifetime.svg)
+
+| Command        | Description |
+| -------------- | ----------- |
+| `kubectl apply -f pod_multicontainer.yml` | [pod_multicontainer.yml](/kubernetes-yaml/pod_multicontainer.yml) üzerinden tek bir container içerisinde birden fazla uuygulama tanımuyla pod yaratılması <br> ![](/img/kubernetes_multicontainer.png) |
+| `kubectl exec -it multicontainer -c webcontainer -- bash` | multicontainer olarak yaratılan pod içerisindeki birden fazla uygulama içerisinden tek bir container ismi seçilerek etkileşimli shell ile bağlantı kurulması. |
+
+# DNS sorunu
+[Debugging DNS Resolution](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/)
+
+```
+> kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+> kubectl get pods dnsutils
+> kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+> kubectl exec -ti dnsutils -- cat /etc/resolv.conf
+> kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+> kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+> kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
+> kubectl logs --namespace=kube-system -l k8s-app=kube-dns
+> kubectl get svc --namespace=kube-system
+> kubectl get endpoints kube-dns --namespace=kube-system
+> kubectl -n kube-system edit configmap coredns
+> kubectl describe clusterrole system:coredns -n kube-system
+> kubectl exec -i -t dnsutils -- nslookup <service-name>
+> kubectl exec -i -t dnsutils -- nslookup <service-name>.<namespace>
+```
+
+
+[Configuration of Stub-domain and upstream nameserver using CoreDNS](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#configuration-of-stub-domain-and-upstream-nameserver-using-coredns)
+
+```
+> kubectl get configmaps -n kube-system coredns -o yaml > coredns.yaml
+> kubectl -n kube-system edit configmap coredns
+> sudo kubeadm config print init-defaults --kubeconfig ClusterConfiguration > kubeadm.yml
+```
+
+[coredns.yaml](yaml/coredns.yaml) \
+[corednscustom.yaml](yaml/corednscustom.yaml) \
+[kubeadm.yaml](yaml/kubeadm.yml)
+
+```
+sudo iptables -t nat -L PREROUTING | column -t
+sudo iptables -t nat -L KUBE-SERVICES -n  | column -t
+sudo iptables -t nat -L KUBE-NODEPORTS -n  | column -t
+```
+
+ÇÖZÜM:
+kubernetes master node üzerinde aşağıdaki kod çalıştırılır.
+echo 'nameserver 8.8.8.8' >> /etc/resolv.conf

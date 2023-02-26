@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multicontainer
+spec:
+  containers:
+    - name: webcontainer
+      image: nginx
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: sharedvolume
+
+    - name: sidecarcontainer
+      image: busybox
+      command:
+        - "/bin/sh"
+      args:
+        - "-c"
+        - "while true; do wget --no-check-certificate -O /var/log/index.html https://raw.githubusercontent.com/ekremsaydam/docker-info/master/examDockerFiles/dockerserviceupdateroolback/helloworld.html; sleep 15; done"
+      volumeMounts:
+        - mountPath: /var/log
+          name: sharedvolume
+  volumes:
+    - name: sharedvolume
+      emptyDir: {}
