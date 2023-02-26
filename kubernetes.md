@@ -675,4 +675,7 @@ sudo iptables -t nat -L KUBE-NODEPORTS -n  | column -t
 
 ÇÖZÜM:
 kubernetes master node üzerinde aşağıdaki kod çalıştırılır.
+
+```
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
+```
