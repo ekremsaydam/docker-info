@@ -460,4 +460,4 @@ kubectl get nodes
 kubectl uncordon devopsvm
 kubectl get nodes
 ```
-[Upgrading kubeadm clusters](https://docs.docker.com/storage/bind-mounts/](https://v1-27.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)https://v1-27.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
+[Upgrading kubeadm clusters](https://v1-27.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
