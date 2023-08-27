@@ -460,4 +460,16 @@ kubectl get nodes
 kubectl uncordon devopsvm
 kubectl get nodes
 ```
+`sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml`
+
+![image](https://github.com/ekremsaydam/docker-info/assets/30255407/99482862-b82e-4a70-b644-665e59563cda)
+![image](https://github.com/ekremsaydam/docker-info/assets/30255407/5c95de28-2407-4b6e-bf8f-6dc01a6c744b)
+
+```
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+kubectl version
+kubectl get pods -A
+kubectl get nodes
+```
 [Upgrading kubeadm clusters](https://v1-27.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
