@@ -422,3 +422,41 @@ komutu ile hub.docker.com üzerinde image ara yapılabilir. Yada direkt web site
 
 # Araştırma Konusu
 Bocker
+
+# UPDATE
+```
+kubectl get nodes
+kubectl get pods -A
+
+sudo apt-get update
+sudo apt-cache madison kubeadm
+
+sudo apt-mark unhold kubeadm
+sudo apt-get update
+sudo apt-get install -y kubeadm=1.28.1-00
+sudo apt-mark hold kubeadm
+
+sudo kubeadm version
+
+sudo kubeadm upgrade plan
+sudo kubeadm upgrade apply v1.28.1
+
+sudo kubeadm upgrade node
+sudo kubeadm upgrade apply
+
+kubectl get nodes
+kubectl drain devopsvm --ignore-daemonsets
+kubectl get nodes
+
+sudo apt-mark unhold kubelet kubectl
+sudo apt-get update
+sudo apt-get install -y kubelet=1.28.1-00 kubectl=1.28.1-00
+sudo apt-mark hold kubelet kubectl
+
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+kubectl get nodes
+kubectl uncordon devopsvm
+kubectl get nodes
+```
